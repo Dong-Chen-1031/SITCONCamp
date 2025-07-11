@@ -3,41 +3,88 @@
 {% block title %}首頁 - SITCONCamp{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="jumbotron bg-primary text-white rounded p-5 mb-4">
-            <h1 class="display-4">歡迎來到 SITCONCamp</h1>
-            <p class="lead">這是一個使用 Flask 建立的基本網站架構。</p>
-            <hr class="my-4">
-            <p>您可以在這裡開始建立您的 Web 應用程式。</p>
-            <a class="btn btn-light btn-lg" href="{{ url_for('about') }}" role="button">了解更多</a>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-primary to-accent text-white rounded-xl p-8 mb-8 shadow-lg">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">歡迎來到 SITCONCamp</h1>
+        <p class="text-xl mb-4 opacity-90">這是一個使用 Flask 和 Tailwind CSS 建立的現代化網站架構。</p>
+        <div class="h-px bg-white opacity-30 my-6"></div>
+        <p class="text-lg mb-6 opacity-80">您可以在這裡開始建立您的 Web 應用程式。</p>
+        <a href="{{ url_for('about') }}" class="inline-flex items-center px-6 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200">
+            了解更多
+            <svg class="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </a>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+            <div class="flex items-center mb-4">
+                <div class="bg-primary/10 p-3 rounded-full">
+                    <svg class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold ml-3">功能特色</h3>
+            </div>
+            <p class="text-gray-600 mb-4">這個 Flask 架構包含了基本的路由、模板系統、以及 API 端點。</p>
+            <a href="{{ url_for('about') }}" class="text-primary hover:text-primary/80 font-medium inline-flex items-center">
+                詳細資訊
+                <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </a>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+            <div class="flex items-center mb-4">
+                <div class="bg-accent/10 p-3 rounded-full">
+                    <svg class="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold ml-3">API 測試</h3>
+            </div>
+            <p class="text-gray-600 mb-4">您可以測試我們的 API 端點功能。</p>
+            <button onclick="testAPI()" class="bg-accent hover:bg-accent/90 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 inline-flex items-center">
+                測試 API
+                <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+            <div class="flex items-center mb-4">
+                <div class="bg-blue-500/10 p-3 rounded-full">
+                    <svg class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold ml-3">聯絡我們</h3>
+            </div>
+            <p class="text-gray-600 mb-4">有任何問題或建議，歡迎與我們聯絡。</p>
+            <a href="{{ url_for('contact') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 inline-flex items-center">
+                聯絡表單
+                <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+            </a>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h3>功能特色</h3>
-        <p>這個 Flask 架構包含了基本的路由、模板系統、以及 API 端點。</p>
-        <a href="{{ url_for('about') }}" class="btn btn-outline-primary">詳細資訊</a>
-    </div>
-    <div class="col-md-4">
-        <h3>API 測試</h3>
-        <p>您可以測試我們的 API 端點功能。</p>
-        <button class="btn btn-outline-success" onclick="testAPI()">測試 API</button>
-    </div>
-    <div class="col-md-4">
-        <h3>聯絡我們</h3>
-        <p>有任何問題或建議，歡迎與我們聯絡。</p>
-        <a href="{{ url_for('contact') }}" class="btn btn-outline-info">聯絡表單</a>
-    </div>
-</div>
-
-<div class="row mt-4">
-    <div class="col-md-12">
-        <h3>API 回應</h3>
-        <div id="api-response" class="p-3 bg-light rounded">
-            <p class="text-muted">點擊上方的 "測試 API" 按鈕來查看回應</p>
+    <!-- API Response Section -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-2xl font-semibold mb-4 flex items-center">
+            <svg class="h-6 w-6 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+            </svg>
+            API 回應
+        </h3>
+        <div id="api-response" class="bg-gray-50 p-4 rounded-lg border border-gray-200 font-mono text-sm min-h-[100px]">
+            <p class="text-gray-500">點擊上方的 "測試 API" 按鈕來查看回應</p>
         </div>
     </div>
 </div>

@@ -3,16 +3,35 @@
 {% block title %}訊息已送出 - SITCONCamp{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="alert alert-success" role="alert">
-            <h4 class="alert-heading">訊息已成功送出！</h4>
-            <p>感謝您的來信，我們會盡快回覆您的訊息。</p>
-            <hr>
-            <p class="mb-0">
-                <a href="{{ url_for('index') }}" class="btn btn-primary">回到首頁</a>
-                <a href="{{ url_for('contact') }}" class="btn btn-outline-primary">再次聯絡</a>
-            </p>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+        <div class="mb-6">
+            <div class="bg-accent/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="h-10 w-10 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">訊息已成功送出！</h1>
+            <p class="text-gray-600 text-lg">感謝您的來信，我們會盡快回覆您的訊息。</p>
+        </div>
+        
+        <div class="border-t border-gray-200 pt-6">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ url_for('index') }}" 
+                   class="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors duration-200">
+                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    回到首頁
+                </a>
+                <a href="{{ url_for('contact') }}" 
+                   class="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    再次聯絡
+                </a>
+            </div>
         </div>
     </div>
 </div>
