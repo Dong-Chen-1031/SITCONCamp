@@ -1,167 +1,130 @@
-# SITCONCamp Flask 基本架構
+### 🌟 專案名稱（建議）：
 
-這是一個使用 Flask 框架建立的基本 Web 應用程式架構，包含了現代化的前端界面和完整的後端功能。
+**AI 食譜生成器**（暫名）
 
-## 功能特色
+---
 
-- 🎨 **現代化界面**：使用 Bootstrap 5 打造響應式設計
-- 🔗 **RESTful API**：提供 API 端點供前端呼叫
-- 📝 **表單處理**：包含聯絡表單和資料驗證
-- 🚨 **錯誤處理**：自訂 404 和 500 錯誤頁面
-- 🎯 **模板系統**：使用 Jinja2 模板引擎
-- 📱 **響應式設計**：支援各種裝置螢幕大小
+## 專案定位：
 
-## 專案結構
+> **開放式行為 → 食譜風格輸出器**
+> 允許使用者用積木自由編排任何「行動流程」，不侷限於傳統料理！像是「用水泥攪拌車攪拌蛋糕」也完全 OK，只要語言模型能理解，我們就能輸出。
 
-```
-sitconcamp/
-├── main.py                 # 主要應用程式檔案
-├── config.py               # 配置檔案
-├── pyproject.toml          # 專案設定檔
-├── requirements.txt        # Python 依賴套件
-├── .env.example           # 環境變數範例
-├── README.md              # 專案說明文件
-├── templates/             # HTML 模板目錄
-│   ├── base.html          # 基礎模板
-│   ├── index.html         # 首頁
-│   ├── about.html         # 關於頁面
-│   ├── contact.html       # 聯絡頁面
-│   ├── contact_success.html # 聯絡成功頁面
-│   ├── 404.html           # 404 錯誤頁面
-│   └── 500.html           # 500 錯誤頁面
-└── static/                # 靜態檔案目錄
-    ├── css/
-    │   └── style.css      # 自訂樣式
-    ├── js/
-    │   └── main.js        # JavaScript 功能
-    └── images/            # 圖片檔案
+---
+
+## 💡 結論是什麼？
+
+你前端的積木系統 **不能是固定幾種動作（例如切、煮）**，而是：
+
+### ✅ 每一塊積木 → 一個通用動作描述：
+
+```json
+{ "action": "用水泥攪拌車攪拌", "ingredient": "蛋糕糊", "time": "10分鐘" }
 ```
 
-## 安裝與設定
+或甚至：
 
-### 1. 安裝依賴套件
-
-```bash
-# 使用 uv（推薦）
-uv sync
-
-# 或使用 pip
-pip install -r requirements.txt
+```json
+{ "description": "將洋蔥丟進水泥攪拌車裡攪拌3分鐘" }
 ```
 
-### 2. 設定環境變數
+---
 
-```bash
-# 複製環境變數範例檔案
-cp .env.example .env
+## ✅ 建議的前端設計（積木自由輸入版）
 
-# 編輯 .env 檔案，填入您的設定
+使用 **積木 + 自由輸入欄位**：
+
+### 🧱 積木類型（建議兩種）
+
+1. **結構化積木（有欄位）**：
+
+   * `動作`：文字輸入欄
+   * `材料`：文字輸入欄
+   * `時間/方式`：可選欄位
+   * 可以協助新手快速排出基本格式
+
+2. **自由輸入積木**（power user 用）：
+
+   * 單一文字欄位，直接描述整步驟
+   * 例如：「我在山上用雷射劍烤小黃瓜，時間不限」
+
+---
+
+## 🧠 結合 AI 的意義：
+
+這就像你是在用積木「拼 prompt」，我們只是幫使用者把它們整理成：
+
+```
+請幫我根據以下動作生成一份完整的說明文件（格式像是正式食譜）：
+1. 用水泥攪拌車攪拌蛋糕糊10分鐘
+2. 用噴火龍炙燒表面
+3. 撒上無敵星星
 ```
 
-### 3. 執行應用程式
+然後丟給 GPT，生成一個爆笑或正式的內容。你甚至可以指定風格：「請用認真的語氣生成」或「用屁孩語氣講解」！
 
-```bash
-python main.py
-```
+---
 
-應用程式將在 `http://localhost:5000` 上運行。
+## ✅ 技術架構不變，但積木邏輯改成更彈性：
 
-## 路由說明
+| 元件         | 更新後功能                     |
+| ---------- | ------------------------- |
+| 前端 Blockly | 可動態新增自由文字欄位積木，或半結構化欄位     |
+| JSON 輸出    | 支援 `description` 欄位（自由描述） |
+| API        | 把 JSON 組成自然語言 prompt      |
+| GPT        | 生成超自由風格食譜、故事或幻想製程         |
 
-| 路由 | 方法 | 說明 |
-|------|------|------|
-| `/` | GET | 首頁 |
-| `/about` | GET | 關於頁面 |
-| `/contact` | GET, POST | 聯絡表單 |
-| `/contact/success` | GET | 聯絡成功頁面 |
-| `/api/data` | GET, POST | API 端點 |
+---
 
-## API 使用範例
 
-### GET 請求
-```bash
-curl http://localhost:5000/api/data
-```
+## 🎯 專案目標
 
-### POST 請求
-```bash
-curl -X POST http://localhost:5000/api/data \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Hello from API"}'
-```
+1. **使用者在前端拖拉積木**（像 Scratch）來表示料理步驟
+2. 前端將積木轉為語意清楚的 `JSON`（或 list）格式
+3. 將此 JSON 傳給後端 API
+4. 後端接收 JSON，**轉換為自然語言的 prompt**
+5. 使用 GPT 模型生成一份完整的食譜（含標題、材料、步驟、時間等）
+6. （可選）評估食譜是否合理（例如食材是否熟、會不會拉肚子）
+7. 回傳給前端，顯示漂亮的食譜文字與圖片（用 Tailwind CSS 呈現）
 
-## 自訂功能
+---
 
-### 1. 新增路由
+## 📡 API 功能（Flask）
 
-在 `main.py` 中添加新的路由函數：
+1. 接收 JSON 請求
+2. 組成對 GPT 的 prompt
+3. 呼叫語言模型（gemini）
+4. 回傳格式化好的食譜：
 
-```python
-@app.route('/new-page')
-def new_page():
-    return render_template('new_page.html')
-```
+   * 食譜名稱
+   * 材料（含份量）
+   * 步驟說明
+   * 所需時間
+   * 建議份量
+   * 可選：一張 AI 生成的食物圖（如用 DALL·E）
 
-### 2. 建立新模板
+---
 
-在 `templates/` 目錄中建立新的 HTML 檔案：
+## 🖥️ 技術架構建議
 
-```html
-{% extends "base.html" %}
+| 元件   | 技術                                 |
+| ---- | ---------------------------------- |
+| 前端   | HTML + JS + Blockly + Tailwind CSS |
+| 後端   | Flask (Python) + OpenAI API        |
+| 部署建議 | Render / Vercel / Railway / 自架 VPS |
 
-{% block title %}新頁面 - SITCONCamp{% endblock %}
+---
 
-{% block content %}
-<h1>新頁面</h1>
-<p>您的內容在這裡...</p>
-{% endblock %}
-```
+## 🎨 UI/UX 建議（TailwindCSS 風格）
 
-### 3. 添加靜態檔案
+* 淺色系界面
+* 積木拖拉區＋「產生食譜」按鈕
+* 結果區：美觀呈現食譜（標題、圖片、材料表格、步驟條列、綜合打分、死亡率＋腹瀉率）
 
-將 CSS、JavaScript 或圖片檔案放在 `static/` 目錄中，然後在模板中使用：
+---
 
-```html
-<link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
-<script src="{{ url_for('static', filename='js/custom.js') }}"></script>
-<img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
-```
+## 🔮 進階功能（未來可加）
 
-## 部署
-
-### 使用 Gunicorn
-
-```bash
-# 安裝 Gunicorn
-pip install gunicorn
-
-# 執行應用程式
-gunicorn -w 4 -b 0.0.0.0:5000 main:app
-```
-
-### 使用 Docker
-
-建立 `Dockerfile`：
-
-```dockerfile
-FROM python:3.13-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY . .
-
-EXPOSE 5000
-
-CMD ["python", "main.py"]
-```
-
-## 貢獻
-
-歡迎提交 Pull Request 或開 Issue 來改善這個專案。
-
-## 授權
-
-本專案採用 MIT 授權條款。
+* 食材熱量、健康風險提示（用成分 API）
+* 自動產生圖片（用 Gemini）
+* 使用者登入與儲存自己的食譜
+* 「我家有什麼材料」→ AI 幫你設計菜單
