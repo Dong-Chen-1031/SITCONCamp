@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>食譜積木編輯器</title>
+  <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    #blocklyDiv {
+      height: 80vh;
+      width: 100%;
+    }
+    #output {
+      height: 20vh;
+      padding: 1em;
+      background-color: #f9f9f9;
+      overflow-y: auto;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align: center;">🧱 食譜神器積木介面</h2>
+  <div id="blocklyDiv"></div>
+  <xml id="toolbox" style="display: none">
+    <category name="動作" colour="#5CA65C">
+      <block type="chop"></block>
+      <block type="fry"></block>
+      <block type="add"></block>
+    </category>
+    <category name="變數" colour="#FFAB19">
+      <block type="variables_set"></block>
+    </category>
+  </xml>
+  <div id="output"></div>
+
+  <script>
+    const workspace = Blockly.inject('blocklyDiv', {
+      toolbox: document.getElementById('toolbox')
+    });
+
+    // 自訂積木
+    Blockly.defineBlocksWithJsonArray([
+      {
+        "type": "chop",
+        "message0": "把 %1 切成 %2",
+        "args0": [
+          { "type": "field_input", "name": "INGREDIENT", "text": "食材" },
+          { "type": "field_dropdown", "name": "STYLE", "options": [["絲狀", "絲狀"], ["塊狀", "塊狀"], ["片狀", "片狀"]] }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 160
+      },
+      {
+        "type": "fry",
+        "message0": "用 %1 炒 %2 約 %3 分鐘",
+        "args0": [
+          { "type": "field_input", "name": "OIL", "text": "油" },
+          { "type": "field_input", "name": "INGREDIENT", "text": "食材" },
+          { "type": "field_number", "name": "TIME", "value": 3, "min": 0 }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 20
+      },
+      {
+        "type": "add",
+        "message0": "加入 %1",
+        "args0": [
+          { "type": "field_input", "name": "INGREDIENT", "text": "食材" }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 60
+      }
+    ]);
+
+    // 轉成 JSON list
+    function generateJSON() {
+      const jsonList = [];
+      const blocks = workspace.getTopBlocks(true);
+      for (let block of blocks) {
+        while (block) {
+          const type = block.type;
+          let step = {};
+
+          if (type === 'chop') {
+            step = {
+              action: '切',
+              ingredient: block.getFieldValue('INGREDIENT'),
+              style: block.getFieldValue('STYLE')
+            };
+          } else if (type === 'fry') {
+            step = {
+              action: '炒',
+              oil: block.getFieldValue('OIL'),
+              ingredient: block.getFieldValue('INGREDIENT'),
+              time: block.getFieldValue('TIME') + '分鐘'
+            };
+          } else if (type === 'add') {
+            step = {
+              action: '加入',
+              ingredient: block.getFieldValue('INGREDIENT')
+            };
+          }
+
+          jsonList.push(step);
+          block = block.getNextBlock();
+        }
+      }
+      return jsonList;
+    }
+
+    // 顯示 JSON 結果
+    workspace.addChangeListener(() => {
+      const list = generateJSON();
+      document.getElementById('output').textContent = JSON.stringify(list, null, 2);
+    });
+  </script>
+</body>
+</html>

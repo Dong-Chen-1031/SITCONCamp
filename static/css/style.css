@@ -1,93 +1,596 @@
-/* 自訂樣式 */
+/* AI 食譜生成器 - 自訂樣式 */
+
+/* 深色模式變數 */
 :root {
-    --primary-color: #007bff;
-    --secondary-color: #6c757d;
-    --success-color: #28a745;
-    --danger-color: #dc3545;
-    --warning-color: #ffc107;
-    --info-color: #17a2b8;
-    --light-color: #f8f9fa;
-    --dark-color: #343a40;
+    --primary-color: #3B82F6;
+    --secondary-color: #64748B;
+    --accent-color: #10B981;
+    --dark-color: #1E293B;
+    --light-bg: #F8FAFC;
+    --dark-bg: #0F172A;
+}
+
+/* 基本樣式 */
+* {
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
 }
 
-.jumbotron {
-    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
-    color: white;
+/* 深色模式 */
+.dark {
+    color-scheme: dark;
 }
 
-.navbar-brand {
-    font-weight: bold;
-    font-size: 1.5rem;
+/* 積木系統樣式 */
+.block-item {
+    transition: all 0.3s ease;
+    cursor: move;
+    position: relative;
+    margin-left: 1.5rem;
 }
 
-.card {
-    transition: transform 0.2s ease-in-out;
-    border: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+@media (min-width: 640px) {
+    .block-item {
+        margin-left: 2rem;
+    }
 }
 
-.card:hover {
+.block-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-.btn {
-    transition: all 0.2s ease-in-out;
+.dark .block-item:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
-.btn:hover {
+.block-item.focused {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.block-item.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+}
+
+.block-template {
+    transition: all 0.2s ease;
+}
+
+.block-template:hover {
     transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-footer {
-    margin-top: auto;
+.block-template.dragging {
+    opacity: 0.8;
+    transform: rotate(3deg);
 }
 
-/* 響應式設計 */
-@media (max-width: 768px) {
-    .jumbotron {
-        padding: 2rem 1rem;
+/* 步驟編號 */
+.step-number {
+    z-index: 10;
+    animation: pulse 2s infinite;
+    left: -1.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 0.625rem;
+}
+
+@media (min-width: 640px) {
+    .step-number {
+        left: -2rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 0.75rem;
     }
-    
-    .display-4 {
-        font-size: 2rem;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* 連接線 */
+.block-connector {
+    z-index: 5;
+    left: -0.75rem;
+}
+
+@media (min-width: 640px) {
+    .block-connector {
+        left: -1rem;
     }
 }
 
-/* 表單樣式 */
-.form-control:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+.block-connector::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 6px solid #60A5FA;
 }
 
-/* API 回應區域 */
-#api-response {
-    min-height: 100px;
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem;
-    font-family: 'Courier New', monospace;
-    white-space: pre-wrap;
+/* 拖放區域 */
+.drag-over {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: #3B82F6;
+    border-style: solid;
+}
+
+.dark .drag-over {
+    background-color: rgba(59, 130, 246, 0.2);
+}
+
+.dark .block-template:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 工作區樣式 */
+#workspace {
+    transition: all 0.3s ease;
+}
+
+#workspace.drag-over {
+    background-color: #EEF2FF;
+    border-color: #3B82F6;
+}
+
+.dark #workspace.drag-over {
+    background-color: #1E1B4B;
+    border-color: #3B82F6;
 }
 
 /* 載入動畫 */
-.spinner-border-sm {
-    width: 1rem;
-    height: 1rem;
+.loading-spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3B82F6;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
 }
 
-/* 自訂按鈕樣式 */
-.btn-custom {
-    background: linear-gradient(45deg, var(--primary-color), var(--info-color));
-    border: none;
-    color: white;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-.btn-custom:hover {
-    background: linear-gradient(45deg, var(--info-color), var(--primary-color));
+/* 漸變按鈕 */
+.btn-gradient {
+    background: linear-gradient(135deg, #3B82F6, #10B981);
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(135deg, #2563EB, #059669);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+/* 淡入動畫 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* 滑入動畫 */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-in {
+    animation: slideInUp 0.5s ease-out;
+}
+
+/* 脈動動畫 */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.animate-pulse-hover:hover {
+    animation: pulse 0.5s ease-in-out;
+}
+
+/* 自訂滾動條 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: #374151;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #6b7280;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* 輸入框增強 */
+.input-enhanced {
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.input-enhanced:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dark .input-enhanced:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* 卡片懸停效果 */
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.dark .card-hover:hover {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* 主題切換按鈕 */
+#theme-toggle {
+    transition: all 0.3s ease;
+}
+
+#theme-toggle:hover {
+    transform: rotate(180deg);
+}
+
+/* 工具提示 */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1f2937;
     color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.tooltip:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+/* 響應式積木 */
+@media (max-width: 768px) {
+    .block-item {
+        font-size: 0.875rem;
+    }
+    
+    .block-template {
+        padding: 0.75rem;
+    }
+    
+    #workspace {
+        min-height: 20rem;
+    }
+}
+
+/* 高對比度模式 */
+@media (prefers-contrast: high) {
+    .block-item {
+        border-width: 3px;
+    }
+    
+    .block-template {
+        border-width: 3px;
+    }
+}
+
+/* 減少動畫模式 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* 成功/錯誤狀態 */
+.state-success {
+    border-color: #10B981;
+    background-color: #ECFDF5;
+}
+
+.dark .state-success {
+    background-color: #064E3B;
+}
+
+.state-error {
+    border-color: #EF4444;
+    background-color: #FEF2F2;
+}
+
+.dark .state-error {
+    background-color: #7F1D1D;
+}
+
+/* 特殊效果 */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass-effect {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 文字漸變 */
+.text-gradient {
+    background: linear-gradient(135deg, #3B82F6, #10B981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 食譜結果樣式 */
+#recipe-result {
+    animation: slideInUp 0.5s ease-out;
+}
+
+#recipe-content {
+    line-height: 1.7;
+}
+
+#recipe-content h2 {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dark #recipe-content h2 {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 彈出框樣式 */
+.modal-overlay {
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    animation: slideInUp 0.3s ease-out;
+}
+
+/* 進度條 */
+.progress-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #3B82F6, #10B981);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+/* 標籤樣式 */
+.tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    background-color: #F3F4F6;
+    color: #374151;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.dark .tag {
+    background-color: #374151;
+    color: #D1D5DB;
+}
+
+.tag:hover {
+    background-color: #E5E7EB;
+    transform: translateY(-1px);
+}
+
+.dark .tag:hover {
+    background-color: #4B5563;
+}
+
+/* 步驟編號 */
+.step-number {
+    background: linear-gradient(135deg, #3B82F6, #10B981);
+    color: white;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.875rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* 評分星星 */
+.rating-stars {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.rating-star {
+    color: #FCD34D;
+    font-size: 1.25rem;
+}
+
+.rating-star.empty {
+    color: #D1D5DB;
+}
+
+.dark .rating-star.empty {
+    color: #4B5563;
+}
+
+/* 危險警告 */
+.warning-high {
+    background-color: #FEF2F2;
+    border-color: #EF4444;
+    color: #B91C1C;
+}
+
+.dark .warning-high {
+    background-color: #7F1D1D;
+    border-color: #EF4444;
+    color: #FCA5A5;
+}
+
+.warning-medium {
+    background-color: #FFFBEB;
+    border-color: #F59E0B;
+    color: #D97706;
+}
+
+.dark .warning-medium {
+    background-color: #78350F;
+    border-color: #F59E0B;
+    color: #FCD34D;
+}
+
+.warning-low {
+    background-color: #F0FDF4;
+    border-color: #10B981;
+    color: #047857;
+}
+
+.dark .warning-low {
+    background-color: #064E3B;
+    border-color: #10B981;
+    color: #6EE7B7;
+}
+
+/* 互動式元素 */
+.interactive {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.interactive:hover {
+    transform: scale(1.02);
+}
+
+.interactive:active {
+    transform: scale(0.98);
+}
+
+/* 載入骨架 */
+.skeleton {
+    background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+.dark .skeleton {
+    background: linear-gradient(90deg, #374151 25%, #4B5563 50%, #374151 75%);
+    background-size: 200% 100%;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* 自訂選擇器 */
+.custom-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1em;
+    padding-right: 2.5rem;
+}
+
+/* 食譜卡片 */
+.recipe-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.dark .recipe-card {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .recipe-card:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }

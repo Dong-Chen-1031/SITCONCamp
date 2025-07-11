@@ -1,0 +1,219 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>食材與烹飪方式選擇器</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">自訂料理選擇器</h1>
+    
+    <!-- 食材選擇 -->
+    <div class="mb-4">
+      <label for="ingredient" class="block text-gray-700 text-sm font-bold mb-2">選擇食材</label>
+      <select id="ingredient" aria-label="選擇食材" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">請選擇食材</option>
+        <optgroup label="肉類">
+          <option value="雞肉">雞肉</option>
+          <option value="牛肉">牛肉</option>
+          <option value="豬肉">豬肉</option>
+        </optgroup>
+        <optgroup label="海鮮">
+          <option value="魚">魚</option>
+          <option value="蝦">蝦</option>
+          <option value="蟹">蟹</option>
+        </optgroup>
+        <optgroup label="蔬菜">
+          <option value="高麗菜">高麗菜</option>
+          <option value="花椰菜">花椰菜</option>
+          <option value="菠菜">晃菜</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <!-- 烹飪方式選擇 -->
+    <div class="mb-6">
+      <label for="cookingMethod" class="block text-gray-700 text-sm font-bold mb-2">選擇烹飪方式</label>
+      <select id="cookingMethod" aria-label="選擇烹飪方式" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">請選擇烹飪方式</option>
+        <option value="煎">煎</option>
+        <option value="烤">烤</option>
+        <option value="煮">煮</option>
+        <option value="蒸">蒸</option>
+        <option value="炸">炸</option>
+        <option value="燉">燉</option>
+      </select>
+    </div>
+
+    <!-- 食材選擇 (多選) -->
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2">選擇食材 (可多選)</label>
+      <div id="ingredients" class="grid grid-cols-2 gap-2">
+        <!-- 肉類 -->
+        <div class="col-span-2"><span class="font-semibold">肉類</span></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="雞肉" class="form-checkbox text-blue-600"> <span class="ml-2">雞肉</span></label></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="牛肉" class="form-checkbox text-blue-600"> <span class="ml-2">牛肉</span></label></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="豬肉" class="form-checkbox text-blue-600"> <span class="ml-2">豬肉</span></label></div>
+        <!-- 海鮮 -->
+        <div class="col-span-2"><span class="font-semibold">海鮮</span></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="魚" class="form-checkbox text-blue-600"> <span class="ml-2">魚</span></label></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="蝦" class="form-checkbox text-blue-600"> <span class="ml-2">蝦</span></label></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="蟹" class="form-checkbox text-blue-600"> <span class="ml-2">蟹</span></label></div>
+        <!-- 蔬菜 -->
+        <div class="col-span-2"><span class="font-semibold">蔬菜</span></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="高麗菜" class="form-checkbox text-blue-600"> <span class="ml-2">高麗菜</span></label></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="花椰菜" class="form-checkbox text-blue-600"> <span class="ml-2">花椰菜</span></label></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="菠菜" class="form-checkbox text-blue-600"> <span class="ml-2">菠菜</span></label></div>
+      </div>
+    </div>
+
+    <!-- 烹飪方式選擇 (可多選) -->
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2">選擇烹飪方式 (可多選)</label>
+      <div id="cookingMethods" class="grid grid-cols-3 gap-2">
+        <div><label class="inline-flex items-center"><input type="checkbox" value="煎" class="form-checkbox text-blue-600"> <span class="ml-2">煎</span></label></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="烤" class="form-checkbox text-blue-600"> <span class="ml-2">烤</span></label></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="煮" class="form-checkbox text-blue-600"> <span class="ml-2">煮</span></label></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="蒸" class="form-checkbox text-blue-600"> <span class="ml-2">蒸</span></label></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="炸" class="form-checkbox text-blue-600"> <span class="ml-2">炸</span></label></div>
+        <div><label class="inline-flex items-center"><input type="checkbox" value="燉" class="form-checkbox text-blue-600"> <span class="ml-2">燉</span></label></div>
+      </div>
+    </div>
+
+    <!-- 地名輸入 -->
+    <div class="mb-4">
+      <label for="placeName" class="block text-gray-700 text-sm font-bold mb-2">輸入地名 (選填)</label>
+      <input type="text" id="placeName" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="例如：台式、四川">
+    </div>
+
+    <!-- 料理類型輸入 -->
+    <div class="mb-6">
+      <label for="dishType" class="block text-gray-700 text-sm font-bold mb-2">輸入料理類型 (選填)</label>
+      <input type="text" id="dishType" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="例如：湯、菜、飯">
+    </div>
+
+    <!-- 按鈕區域 -->
+    <div class="flex justify-between mb-6">
+      <button id="submitBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200" aria-describedby="result">產生料理名稱</button>
+      <button id="resetBtn" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition duration-200">重置</button>
+    </div>
+
+    <!-- 結果顯示 -->
+    <div id="result" class="text-center text-lg font-semibold text-gray-800 opacity-0 transition-opacity duration-300" aria-live="polite">請選擇食材和烹飪方式</div>
+  </div>
+
+  <script>
+    const ingredientCheckboxes = document.querySelectorAll('#ingredients input[type="checkbox"]');
+    const cookingMethodCheckboxes = document.querySelectorAll('#cookingMethods input[type="checkbox"]');
+    const placeNameInput = document.getElementById('placeName');
+    const dishTypeInput = document.getElementById('dishType');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultDiv = document.getElementById('result');
+
+    submitBtn.addEventListener('click', () => {
+      const selectedIngredients = Array.from(ingredientCheckboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+
+      const selectedCookingMethods = Array.from(cookingMethodCheckboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+
+      const placeName = placeNameInput.value.trim();
+      const dishType = dishTypeInput.value.trim();
+
+      if (selectedIngredients.length === 0 || selectedCookingMethods.length === 0) {
+        resultDiv.textContent = '請至少選擇一種食材和一種烹飪方式';
+        resultDiv.classList.remove('opacity-0', 'text-gray-800');
+        resultDiv.classList.add('text-red-500');
+      } else {
+        // 組合料理名稱的邏輯
+        let dishName = '';
+        if (placeName) {
+          dishName += placeName;
+        }
+
+        // 將烹飪方式用連接詞組合，例如 "煎烤" 或 "煮燉"
+        if (selectedCookingMethods.length > 0) {
+             dishName += selectedCookingMethods.join(''); // 簡單地連接所有方法
+        }
+
+        // 將食材用連接詞組合，例如 "雞肉牛肉"
+        if (selectedIngredients.length > 0) {
+            dishName += selectedIngredients.join(''); // 簡單地連接所有食材
+        }
+
+        if (dishType) {
+            dishName += dishType;
+        } else {
+             // 如果沒有指定料理類型，可以根據烹飪方式或食材猜測一個
+             if (selectedCookingMethods.includes('湯') || selectedCookingMethods.includes('燉')) {
+                 dishName += '湯';
+             } else if (selectedCookingMethods.includes('飯')) {
+                 dishName += '飯';
+             } else {
+                 dishName += '料理'; // 預設為料理
+             }
+        }
+
+
+        resultDiv.textContent = `建議料理名稱：${dishName}`;
+        resultDiv.classList.remove('opacity-0', 'text-red-500');
+        resultDiv.classList.add('text-gray-800');
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      ingredientCheckboxes.forEach(checkbox => checkbox.checked = false);
+      cookingMethodCheckboxes.forEach(checkbox => checkbox.checked = false);
+      placeNameInput.value = '';
+      dishTypeInput.value = '';
+      resultDiv.textContent = '請選擇食材和烹飪方式';
+      resultDiv.classList.remove('text-gray-800', 'text-red-500');
+      resultDiv.classList.add('opacity-0');
+    });
+  </script>
+</body>
+</html>

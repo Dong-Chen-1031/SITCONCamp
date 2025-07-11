@@ -3,12 +3,46 @@
 {% block title %}伺服器錯誤 - SITCONCamp{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12 text-center">
-        <h1 class="display-1">500</h1>
-        <h2>伺服器錯誤</h2>
-        <p class="lead">抱歉，伺服器發生了內部錯誤。</p>
-        <a href="{{ url_for('index') }}" class="btn btn-primary">回到首頁</a>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center">
+        <div class="mb-8">
+            <h1 class="text-9xl font-bold text-red-300 mb-4">500</h1>
+            <h2 class="text-3xl font-semibold text-gray-900 mb-2">伺服器錯誤</h2>
+            <p class="text-gray-600 text-lg">抱歉，伺服器發生了內部錯誤，我們正在努力修復中。</p>
+        </div>
+        
+        <div class="mb-8">
+            <svg class="h-32 w-32 text-red-300 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+        </div>
+        
+        <div class="space-y-4">
+            <p class="text-gray-500">您可以嘗試：</p>
+            <ul class="text-gray-500 space-y-2">
+                <li>• 重新整理頁面</li>
+                <li>• 稍後再試</li>
+                <li>• 返回首頁</li>
+                <li>• 聯絡我們回報問題</li>
+            </ul>
+        </div>
+        
+        <div class="mt-8 space-x-4">
+            <a href="{{ url_for('index') }}" 
+               class="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors duration-200">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                回到首頁
+            </a>
+            <a href="{{ url_for('contact') }}" 
+               class="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                回報問題
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}
