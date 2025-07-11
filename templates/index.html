@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}首頁 - SITCONCamp{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="jumbotron bg-primary text-white rounded p-5 mb-4">
+            <h1 class="display-4">歡迎來到 SITCONCamp</h1>
+            <p class="lead">這是一個使用 Flask 建立的基本網站架構。</p>
+            <hr class="my-4">
+            <p>您可以在這裡開始建立您的 Web 應用程式。</p>
+            <a class="btn btn-light btn-lg" href="{{ url_for('about') }}" role="button">了解更多</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h3>功能特色</h3>
+        <p>這個 Flask 架構包含了基本的路由、模板系統、以及 API 端點。</p>
+        <a href="{{ url_for('about') }}" class="btn btn-outline-primary">詳細資訊</a>
+    </div>
+    <div class="col-md-4">
+        <h3>API 測試</h3>
+        <p>您可以測試我們的 API 端點功能。</p>
+        <button class="btn btn-outline-success" onclick="testAPI()">測試 API</button>
+    </div>
+    <div class="col-md-4">
+        <h3>聯絡我們</h3>
+        <p>有任何問題或建議，歡迎與我們聯絡。</p>
+        <a href="{{ url_for('contact') }}" class="btn btn-outline-info">聯絡表單</a>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h3>API 回應</h3>
+        <div id="api-response" class="p-3 bg-light rounded">
+            <p class="text-muted">點擊上方的 "測試 API" 按鈕來查看回應</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

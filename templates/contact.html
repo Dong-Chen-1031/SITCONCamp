@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}聯絡我們 - SITCONCamp{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1>聯絡我們</h1>
+        <p class="lead">如果您有任何問題或建議，歡迎與我們聯絡。</p>
+        
+        <form method="POST" action="{{ url_for('contact') }}">
+            <div class="mb-3">
+                <label for="name" class="form-label">姓名</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="email" class="form-label">電子郵件</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="message" class="form-label">訊息</label>
+                <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">送出訊息</button>
+        </form>
+    </div>
+    
+    <div class="col-md-4">
+        <h3>聯絡資訊</h3>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">SITCONCamp</h5>
+                <p class="card-text">
+                    <strong>地址：</strong><br>
+                    台北市信義區信義路五段7號<br><br>
+                    
+                    <strong>電話：</strong><br>
+                    +886-2-1234-5678<br><br>
+                    
+                    <strong>電子郵件：</strong><br>
+                    info@sitconcamp.org
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

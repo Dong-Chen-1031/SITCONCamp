@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}關於 - SITCONCamp{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>關於 SITCONCamp</h1>
+        <p class="lead">這是一個使用 Flask 框架建立的基本 Web 應用程式。</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>技術架構</h3>
+        <ul>
+            <li><strong>Flask</strong> - Python Web 框架</li>
+            <li><strong>Bootstrap</strong> - 前端 CSS 框架</li>
+            <li><strong>Jinja2</strong> - 模板引擎</li>
+            <li><strong>RESTful API</strong> - API 設計</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h3>功能特色</h3>
+        <ul>
+            <li>響應式設計</li>
+            <li>模板繼承</li>
+            <li>錯誤處理</li>
+            <li>表單處理</li>
+            <li>API 端點</li>
+        </ul>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h3>專案結構</h3>
+        <pre class="bg-light p-3 rounded">
+sitconcamp/
+├── main.py          # 主要應用程式檔案
+├── pyproject.toml   # 專案配置檔案
+├── templates/       # HTML 模板目錄
+│   ├── base.html    # 基礎模板
+│   ├── index.html   # 首頁模板
+│   └── ...
+└── static/          # 靜態檔案目錄
+    ├── css/         # CSS 檔案
+    ├── js/          # JavaScript 檔案
+    └── images/      # 圖片檔案
+        </pre>
+    </div>
+</div>
+{% endblock %}

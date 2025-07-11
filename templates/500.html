@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}伺服器錯誤 - SITCONCamp{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h1 class="display-1">500</h1>
+        <h2>伺服器錯誤</h2>
+        <p class="lead">抱歉，伺服器發生了內部錯誤。</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">回到首頁</a>
+    </div>
+</div>
+{% endblock %}

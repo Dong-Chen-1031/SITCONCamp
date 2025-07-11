@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}訊息已送出 - SITCONCamp{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading">訊息已成功送出！</h4>
+            <p>感謝您的來信，我們會盡快回覆您的訊息。</p>
+            <hr>
+            <p class="mb-0">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">回到首頁</a>
+                <a href="{{ url_for('contact') }}" class="btn btn-outline-primary">再次聯絡</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
