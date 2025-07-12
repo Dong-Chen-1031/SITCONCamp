@@ -1,16 +1,86 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 import json
 import os
+import logging
 from datetime import datetime
 import google.generativeai as genai
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
+from functools import wraps
+import re
+import time
+
+# 設定日誌
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-here'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 
 # 設定 Gemini API
-genai.configure(api_key=os.environ.get('GEMINI_API_KEY', 'your-gemini-api-key'))
+api_key = os.environ.get('GEMINI_API_KEY')
+if not api_key:
+    logger.warning("GEMINI_API_KEY 環境變數未設定，使用預設值")
+    api_key = 'your-gemini-api-key'
+
+genai.configure(api_key=api_key)
 model = genai.GenerativeModel('gemini-pro')
+
+# 請求限制裝飾器
+def rate_limit(max_requests=10, window_seconds=60):
+    """簡單的請求限制裝飾器"""
+    request_times = []
+    
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            now = time.time()
+            # 清理過期的請求記錄
+            request_times[:] = [t for t in request_times if now - t < window_seconds]
+            
+            if len(request_times) >= max_requests:
+                return jsonify({
+                    'error': '請求過於頻繁，請稍後再試',
+                    'status': 'rate_limit_exceeded'
+                }), 429
+            
+            request_times.append(now)
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+# 輸入驗證裝飾器
+def validate_json(required_fields=None):
+    """JSON 輸入驗證裝飾器"""
+    if required_fields is None:
+        required_fields = []
+    
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if not request.is_json:
+                return jsonify({
+                    'error': '請求必須是 JSON 格式',
+                    'status': 'invalid_format'
+                }), 400
+            
+            data = request.get_json()
+            if not data:
+                return jsonify({
+                    'error': '請求內容不能為空',
+                    'status': 'empty_request'
+                }), 400
+            
+            # 檢查必需欄位
+            missing_fields = [field for field in required_fields if field not in data]
+            if missing_fields:
+                return jsonify({
+                    'error': f'缺少必要欄位: {", ".join(missing_fields)}',
+                    'status': 'missing_fields'
+                }), 400
+            
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
 
 
 @app.route('/')
