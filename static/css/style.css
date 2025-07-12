@@ -53,8 +53,10 @@ body {
 }
 
 .block-item.dragging {
-    opacity: 0.5;
-    transform: rotate(5deg);
+    opacity: 0.7;
+    transform: rotate(3deg) scale(1.02);
+    z-index: 1000;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 .block-template {
@@ -122,17 +124,13 @@ body {
 
 /* 拖放區域 */
 .drag-over {
-    background-color: rgba(59, 130, 246, 0.1);
-    border-color: #3B82F6;
-    border-style: solid;
+    background-color: rgba(59, 130, 246, 0.05);
+    border: 2px dashed #3b82f6;
+    border-radius: 0.5rem;
 }
 
 .dark .drag-over {
-    background-color: rgba(59, 130, 246, 0.2);
-}
-
-.dark .block-template:hover {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background-color: rgba(59, 130, 246, 0.1);
 }
 
 /* 工作區樣式 */
@@ -593,4 +591,90 @@ body {
 
 .dark .recipe-card:hover {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* 拖拉刪除區域樣式 */
+.delete-zone {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border: 2px dashed #ef4444 !important;
+    border-radius: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.delete-zone::before {
+    content: '🗑️ 拖拉積木到此處刪除';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.875rem;
+    color: #ef4444;
+    font-weight: 600;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+    pointer-events: none;
+    animation: deleteZonePulse 1s ease-in-out infinite;
+}
+
+.dark .delete-zone::before {
+    background: rgba(15, 23, 42, 0.9);
+    color: #ef4444;
+}
+
+.delete-zone::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(239, 68, 68, 0.1) 10px,
+        rgba(239, 68, 68, 0.1) 20px
+    );
+    pointer-events: none;
+    z-index: 999;
+}
+
+@keyframes deleteZonePulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* 工具箱在非拖拉狀態下的提示 */
+.lg\\:col-span-1:not(.delete-zone) {
+    position: relative;
+}
+
+.lg\\:col-span-1:not(.delete-zone)::after {
+    content: '💡 提示：拖拉積木到此處可刪除';
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    color: #6b7280;
+    opacity: 0.6;
+    pointer-events: none;
+    text-align: center;
+    display: none;
+}
+
+/* 當有積木時顯示提示 */
+.has-blocks .lg\\:col-span-1:not(.delete-zone)::after {
+    display: block;
+}
+
+@media (max-width: 1024px) {
+    .lg\\:col-span-1:not(.delete-zone)::after {
+        display: none;
+    }
 }

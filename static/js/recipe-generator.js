@@ -9,6 +9,17 @@ class RecipeGenerator {
     }
     
     init() {
+        // 確保在 DOM 完全載入後執行
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.initializeComponents();
+            });
+        } else {
+            this.initializeComponents();
+        }
+    }
+    
+    initializeComponents() {
         this.setupEventListeners();
         this.setupTheme();
         this.setupDragAndDrop();
@@ -56,9 +67,14 @@ class RecipeGenerator {
         });
         
         // 主題切換
-        document.getElementById('theme-toggle').addEventListener('click', () => {
-            this.toggleTheme();
-        });
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                this.toggleTheme();
+            });
+        } else {
+            console.warn('Theme toggle button not found');
+        }
     }
     
     setupTheme() {
@@ -71,34 +87,66 @@ class RecipeGenerator {
             this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
         }
         
-        this.applyTheme();
+        // 等待 DOM 完全載入後再應用主題
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.applyTheme();
+            });
+        } else {
+            // DOM 已經載入，立即應用主題
+            this.applyTheme();
+        }
+        
+        // 監聽系統主題變化
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                this.isDarkMode = e.matches;
+                this.applyTheme();
+            }
+        });
     }
     
     applyTheme() {
         const html = document.documentElement;
         const themeToggle = document.getElementById('theme-toggle');
         
-        if (this.isDarkMode) {
-            html.classList.add('dark');
-            themeToggle.innerHTML = `
-                <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                </svg>
-            `;
-        } else {
-            html.classList.remove('dark');
-            themeToggle.innerHTML = `
-                <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                </svg>
-            `;
+        // 確保元素存在
+        if (!html) {
+            console.warn('HTML element not found');
+            return;
         }
         
-        localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+        if (this.isDarkMode) {
+            html.classList.add('dark');
+            if (themeToggle) {
+                themeToggle.innerHTML = `
+                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                `;
+            }
+        } else {
+            html.classList.remove('dark');
+            if (themeToggle) {
+                themeToggle.innerHTML = `
+                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                `;
+            }
+        }
+        
+        // 保存主題設定
+        try {
+            localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+        } catch (error) {
+            console.warn('Failed to save theme to localStorage:', error);
+        }
     }
     
     toggleTheme() {
         this.isDarkMode = !this.isDarkMode;
+        console.log('Theme toggled to:', this.isDarkMode ? 'dark' : 'light');
         this.applyTheme();
     }
     
@@ -106,6 +154,7 @@ class RecipeGenerator {
         // 增強的拖放系統
         const workspace = document.getElementById('workspace');
         const blocksContainer = document.getElementById('blocks-container');
+        const toolbox = document.querySelector('.lg\\:col-span-1'); // 工具箱區域
         
         // 積木模板拖拉
         document.querySelectorAll('.block-template').forEach(template => {
@@ -141,10 +190,43 @@ class RecipeGenerator {
             workspace.classList.remove('drag-over');
             
             const blockType = e.dataTransfer.getData('text/plain');
-            if (blockType) {
+            const blockId = e.dataTransfer.getData('text/block-id');
+            
+            if (blockType && !blockId) {
+                // 從工具箱拖拉新積木
                 this.addBlock(blockType);
             }
         });
+        
+        // 工具箱拖放（刪除功能）
+        if (toolbox) {
+            toolbox.addEventListener('dragover', (e) => {
+                const blockId = e.dataTransfer.getData('text/block-id');
+                if (blockId) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    toolbox.classList.add('delete-zone');
+                }
+            });
+            
+            toolbox.addEventListener('dragleave', (e) => {
+                if (!toolbox.contains(e.relatedTarget)) {
+                    toolbox.classList.remove('delete-zone');
+                }
+            });
+            
+            toolbox.addEventListener('drop', (e) => {
+                e.preventDefault();
+                toolbox.classList.remove('delete-zone');
+                
+                // 檢查是否是從工作區拖拉過來的積木
+                const draggedBlockId = e.dataTransfer.getData('text/block-id');
+                if (draggedBlockId) {
+                    this.removeBlock(draggedBlockId);
+                    this.showSuccess('積木已刪除！');
+                }
+            });
+        }
         
         // 使積木容器支持排序
         this.setupSortable();
@@ -153,6 +235,7 @@ class RecipeGenerator {
     setupSortable() {
         const blocksContainer = document.getElementById('blocks-container');
         let draggedElement = null;
+        let draggedBlockId = null;
         
         // 為每個積木添加拖拉事件
         const addDragEvents = (element) => {
@@ -160,14 +243,21 @@ class RecipeGenerator {
             
             element.addEventListener('dragstart', (e) => {
                 draggedElement = element;
+                draggedBlockId = element.id;
                 element.classList.add('dragging');
                 e.dataTransfer.effectAllowed = 'move';
                 e.dataTransfer.setData('text/html', element.outerHTML);
+                // 設置積木ID，用於拖拉到工具箱刪除
+                e.dataTransfer.setData('text/block-id', element.id);
             });
             
             element.addEventListener('dragend', (e) => {
                 element.classList.remove('dragging');
                 draggedElement = null;
+                draggedBlockId = null;
+                
+                // 拖拉結束後更新順序
+                this.updateBlockOrder();
             });
         };
         
@@ -186,11 +276,10 @@ class RecipeGenerator {
             }
         });
         
-        // 為已存在的積木添加拖拉事件
-        blocksContainer.addEventListener('childlist', (e) => {
-            if (e.target.classList.contains('block-item')) {
-                addDragEvents(e.target);
-            }
+        blocksContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            // 拖放完成後更新順序
+            this.updateBlockOrder();
         });
         
         // 使用 MutationObserver 監聽新增的積木
@@ -207,6 +296,47 @@ class RecipeGenerator {
         });
         
         observer.observe(blocksContainer, { childList: true });
+    }
+    
+    updateBlockOrder() {
+        // 重新排列內部數據以匹配 DOM 順序
+        const blockElements = document.querySelectorAll('.block-item');
+        const newBlocksOrder = [];
+        
+        blockElements.forEach((element, index) => {
+            const blockId = element.id;
+            const blockData = this.blocks.find(block => block.id === blockId);
+            
+            if (blockData) {
+                newBlocksOrder.push(blockData);
+            }
+        });
+        
+        // 更新內部數據順序
+        this.blocks = newBlocksOrder;
+        
+        // 更新步驟編號和連接線
+        this.updateStepNumbers();
+        this.updateConnectors();
+    }
+    
+    updateConnectors() {
+        const blockElements = document.querySelectorAll('.block-item');
+        
+        blockElements.forEach((element, index) => {
+            // 移除現有的連接線
+            const existingConnector = element.querySelector('.block-connector');
+            if (existingConnector) {
+                existingConnector.remove();
+            }
+            
+            // 為非第一個積木添加連接線
+            if (index > 0) {
+                const connector = document.createElement('div');
+                connector.className = 'block-connector absolute -top-4 left-2 w-0.5 h-8 bg-blue-400';
+                element.appendChild(connector);
+            }
+        });
     }
     
     getDragAfterElement(container, y) {
@@ -254,6 +384,31 @@ class RecipeGenerator {
         const removeBtn = blockElement.querySelector('.remove-block');
         removeBtn.addEventListener('click', () => {
             this.removeBlock(blockId);
+        });
+        
+        // 添加觸控長按刪除（行動裝置友好）
+        let touchTimer = null;
+        
+        blockElement.addEventListener('touchstart', (e) => {
+            touchTimer = setTimeout(() => {
+                if (confirm('確定要刪除這個積木嗎？')) {
+                    this.removeBlock(blockId);
+                }
+            }, 1000); // 長按 1 秒
+        });
+        
+        blockElement.addEventListener('touchend', (e) => {
+            if (touchTimer) {
+                clearTimeout(touchTimer);
+                touchTimer = null;
+            }
+        });
+        
+        blockElement.addEventListener('touchmove', (e) => {
+            if (touchTimer) {
+                clearTimeout(touchTimer);
+                touchTimer = null;
+            }
         });
         
         // 添加輸入事件監聽
@@ -312,8 +467,9 @@ class RecipeGenerator {
         // 隱藏空狀態
         this.toggleEmptyState();
         
-        // 更新所有步驟編號
+        // 更新所有步驟編號和連接線
         this.updateStepNumbers();
+        this.updateConnectors();
         
         // 自動聚焦到第一個輸入框
         const firstInput = blockElement.querySelector('input, textarea');
@@ -363,6 +519,7 @@ class RecipeGenerator {
                 this.blocks = this.blocks.filter(block => block.id !== blockId);
                 this.toggleEmptyState();
                 this.updateStepNumbers();
+                this.updateConnectors();
             }, 300);
         }
     }
@@ -398,11 +555,14 @@ class RecipeGenerator {
     toggleEmptyState() {
         const workspace = document.getElementById('workspace');
         const emptyState = workspace.querySelector('.absolute.inset-0');
+        const body = document.body;
         
         if (this.blocks.length > 0) {
             emptyState.style.display = 'none';
+            body.classList.add('has-blocks');
         } else {
             emptyState.style.display = 'flex';
+            body.classList.remove('has-blocks');
         }
     }
     
