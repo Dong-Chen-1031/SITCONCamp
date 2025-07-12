@@ -58,7 +58,7 @@
                             <div class="block-template bg-blue-100 dark:bg-blue-900 border-2 border-blue-300 dark:border-blue-700 rounded-lg p-3 cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors flex-shrink-0"
                                  data-block-type="structured">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-blue-600 dark:text-blue-400">⚙️</span>
+                                    <span class="material-icons text-blue-600 dark:text-blue-400">settings</span>
                                     <span class="text-sm font-medium text-blue-800 dark:text-blue-200">動作</span>
                                 </div>
                             </div>
@@ -66,7 +66,7 @@
                             <div class="block-template bg-green-100 dark:bg-green-900 border-2 border-green-300 dark:border-green-700 rounded-lg p-3 cursor-pointer hover:bg-green-200 dark:hover:bg-green-800 transition-colors flex-shrink-0"
                                  data-block-type="ingredient">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-green-600 dark:text-green-400">🥕</span>
+                                    <span class="material-icons text-green-600 dark:text-green-400">restaurant</span>
                                     <span class="text-sm font-medium text-green-800 dark:text-green-200">材料</span>
                                 </div>
                             </div>
@@ -74,7 +74,7 @@
                             <div class="block-template bg-purple-100 dark:bg-purple-900 border-2 border-purple-300 dark:border-purple-700 rounded-lg p-3 cursor-pointer hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors flex-shrink-0"
                                  data-block-type="freeform">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-purple-600 dark:text-purple-400">✨</span>
+                                    <span class="material-icons text-purple-600 dark:text-purple-400">auto_awesome</span>
                                     <span class="text-sm font-medium text-purple-800 dark:text-purple-200">自由</span>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                                     <div class="block-template bg-blue-100 dark:bg-blue-900 border-2 border-blue-300 dark:border-blue-700 rounded-lg p-3 cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                                          data-block-type="structured">
                                         <div class="flex items-center space-x-2">
-                                            <span class="text-blue-600 dark:text-blue-400">⚙️</span>
+                                            <span class="material-icons text-blue-600 dark:text-blue-400">settings</span>
                                             <span class="text-sm font-medium text-blue-800 dark:text-blue-200">動作積木</span>
                                         </div>
                                         <div class="text-xs text-blue-600 dark:text-blue-400 mt-1">動作 + 材料 + 時間</div>
@@ -100,7 +100,7 @@
                                     <div class="block-template bg-green-100 dark:bg-green-900 border-2 border-green-300 dark:border-green-700 rounded-lg p-3 cursor-pointer hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
                                          data-block-type="ingredient">
                                         <div class="flex items-center space-x-2">
-                                            <span class="text-green-600 dark:text-green-400">🥕</span>
+                                            <span class="material-icons text-green-600 dark:text-green-400">restaurant</span>
                                             <span class="text-sm font-medium text-green-800 dark:text-green-200">材料積木</span>
                                         </div>
                                         <div class="text-xs text-green-600 dark:text-green-400 mt-1">材料 + 份量</div>
@@ -114,7 +114,7 @@
                                     <div class="block-template bg-purple-100 dark:bg-purple-900 border-2 border-purple-300 dark:border-purple-700 rounded-lg p-3 cursor-pointer hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors"
                                          data-block-type="freeform">
                                         <div class="flex items-center space-x-2">
-                                            <span class="text-purple-600 dark:text-purple-400">✨</span>
+                                            <span class="material-icons text-purple-600 dark:text-purple-400">auto_awesome</span>
                                             <span class="text-sm font-medium text-purple-800 dark:text-purple-200">自由描述</span>
                                         </div>
                                         <div class="text-xs text-purple-600 dark:text-purple-400 mt-1">完全自由輸入</div>
@@ -129,16 +129,16 @@
                         <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">快速操作</h4>
                         <div class="space-y-2">
                             <button id="preview-blocks" class="w-full px-3 py-2 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded-md hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors text-sm">
-                                📋 預覽積木
+                                <span class="material-icons align-middle text-indigo-700 dark:text-indigo-300">assignment</span> 預覽積木
                             </button>
                             <button id="ingredient-helper" class="w-full px-3 py-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 rounded-md hover:bg-yellow-200 dark:hover:bg-yellow-800 transition-colors text-sm">
-                                🥘 我有什麼材料
+                                <span class="material-icons align-middle text-yellow-700 dark:text-yellow-300">restaurant</span> 我有什麼材料
                             </button>
                             <button id="clear-workspace" class="w-full px-3 py-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-md hover:bg-red-200 dark:hover:bg-red-800 transition-colors text-sm">
-                                🗑️ 清空工作區
+                                <span class="material-icons align-middle text-red-700 dark:text-red-300">delete</span> 清空工作區
                             </button>
                             <button id="save-recipe" class="w-full px-3 py-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-md hover:bg-green-200 dark:hover:bg-green-800 transition-colors text-sm">
-                                💾 保存食譜
+                                <span class="material-icons align-middle text-green-700 dark:text-green-300">save</span> 保存食譜
                             </button>
                         </div>
                     </div>
@@ -151,7 +151,7 @@
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">🔧 工作區域</h3>
                         <button id="generate-recipe" class="w-full sm:w-auto px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
-                            ✨ 生成食譜
+                            <span class="material-icons align-middle">auto_awesome</span> 生成食譜
                         </button>
                     </div>
                     
@@ -179,7 +179,7 @@
         <!-- Recipe Result Section -->
         <div class="mt-8">
             <div id="recipe-result" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hidden">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🍽️ 生成的食譜</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4"><span class="material-icons align-middle">restaurant</span> 生成的食譜</h3>
                 <div id="recipe-content">
                     <!-- Recipe will be displayed here -->
                 </div>
@@ -205,7 +205,7 @@
     <div class="block-item structured-block" data-block-type="structured">
         <div class="bg-blue-50 dark:bg-blue-900 border-2 border-blue-200 dark:border-blue-700 rounded-lg p-4 relative">
             <div class="flex items-center justify-between mb-3">
-                <span class="text-blue-600 dark:text-blue-400 font-medium text-sm sm:text-base">⚙️ 動作積木</span>
+                <span class="material-icons text-blue-600 dark:text-blue-400 font-medium text-sm sm:text-base">settings</span> 動作積木
                 <button class="remove-block text-red-500 hover:text-red-700 text-sm">✕</button>
             </div>
             <div class="space-y-2">
@@ -229,7 +229,7 @@
     <div class="block-item ingredient-block" data-block-type="ingredient">
         <div class="bg-green-50 dark:bg-green-900 border-2 border-green-200 dark:border-green-700 rounded-lg p-4 relative">
             <div class="flex items-center justify-between mb-3">
-                <span class="text-green-600 dark:text-green-400 font-medium text-sm sm:text-base">🥕 材料積木</span>
+                <span class="material-icons text-green-600 dark:text-green-400 font-medium text-sm sm:text-base">restaurant</span> 材料積木
                 <button class="remove-block text-red-500 hover:text-red-700 text-sm">✕</button>
             </div>
             <div class="space-y-2">
@@ -249,7 +249,7 @@
     <div class="block-item freeform-block" data-block-type="freeform">
         <div class="bg-purple-50 dark:bg-purple-900 border-2 border-purple-200 dark:border-purple-700 rounded-lg p-4 relative">
             <div class="flex items-center justify-between mb-3">
-                <span class="text-purple-600 dark:text-purple-400 font-medium text-sm sm:text-base">✨ 自由描述</span>
+                <span class="material-icons text-purple-600 dark:text-purple-400 font-medium text-sm sm:text-base">auto_awesome</span> 自由描述
                 <button class="remove-block text-red-500 hover:text-red-700 text-sm">✕</button>
             </div>
             <div>

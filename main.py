@@ -293,6 +293,7 @@ def generate():
         config=generate_content_config,
     ):
         print(chunk.text, end="")
+    return chunk.text
 
 
 def generate_ai_ans(steps: str, style: str = '正式') -> Dict[str, Any]:
@@ -306,7 +307,7 @@ def generate_ai_ans(steps: str, style: str = '正式') -> Dict[str, Any]:
         '瘋狂': '請用瘋狂、誇張的語氣'
     }
     
-    style_prompt = style_prompts.get(style, '請用正式的語氣')
+    style_promthis.removeBlock(blockId);pt = style_prompts.get(style, '請用正式的語氣')
     
     prompt = f"""
     {style_prompt}，根據以下步驟生成一份完整的食譜：
@@ -460,6 +461,7 @@ def validate_recipe_safety(recipe_text: str) -> Dict[str, Any]:
         }
 
 
+
 def generate_ingredient_suggestions(ingredients: List[str]) -> List[Dict[str, Any]]:
     """根據現有材料生成建議食譜"""
     
@@ -507,6 +509,36 @@ def generate_ingredient_suggestions(ingredients: List[str]) -> List[Dict[str, An
             'steps': ['清洗材料', '簡單調理'],
             'time': '30分鐘'
         }]
+
+
+from google import genai
+import os
+import base64
+
+def generate_picture(prompt: str) -> str:
+    """生成食物圖片,回傳 base64 編碼"""
+    client = genai.Client(api_key=api_key)
+
+    result = client.models.generate_images(
+        model="models/imagen-4.0-generate-preview-0 6-06",
+        prompt=prompt,
+        config=dict(
+            number_of_images=1,
+            output_mime_type="image/jpeg",
+            person_generation="ALLOW_ADULT",
+            aspect_ratio="1:1",
+        ),
+    )
+
+    if not result.generated_images:
+        print("No images generated.")
+        return
+
+    img_bytes = result.generated_images[0].image.image_bytes
+    # 把二進位圖轉成 base64 字串，前端才能顯示
+    b64 = base64.b64encode(img_bytes).decode('utf-8')
+    return b64
+
 
 
 @app.errorhandler(404)
