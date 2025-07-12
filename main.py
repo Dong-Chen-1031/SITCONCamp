@@ -520,7 +520,7 @@ def generate_picture(prompt: str) -> str:
     client = genai.Client(api_key=api_key)
 
     result = client.models.generate_images(
-        model="models/imagen-4.0-generate-preview-0 6-06",
+        model="models/imagen-4.0-generate-preview-06-06",
         prompt=prompt,
         config=dict(
             number_of_images=1,
