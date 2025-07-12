@@ -1,3 +1,7 @@
+import base64
+import os
+from google import genai
+from google.genai import types
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 import json
 import os
@@ -211,10 +215,6 @@ def blocks_to_description(blocks: List[Dict[str, Any]]) -> str:
 # To run this code you need to install the following dependencies:
 # pip install google-genai
 
-import base64
-import os
-from google import genai
-from google.genai import types
 
 
 client = genai.Client(
@@ -222,15 +222,8 @@ client = genai.Client(
 )
 
 model = "gemini-2.5-flash"
-contents = [
-    types.Content(
-        role="user",
-        parts=[
-            types.Part.from_text(text=SYSTEM_PROMPT),
-        ],
-    ),
-]
-def generate():
+
+def generate(str_: str):
     generate_content_config = types.GenerateContentConfig(
         thinking_config = types.ThinkingConfig(
             thinking_budget=-1,
@@ -285,14 +278,25 @@ def generate():
                 ),
             },
         ),
+        system_instruction=[
+            types.Part.from_text(text=SYSTEM_PROMPT),
+        ],
     )
-
-    for chunk in client.models.generate_content_stream(
+    contents = [
+        types.Content(
+            role="user",
+            parts=[
+                types.Part.from_text(text=str_),
+            ],
+        ),
+    ]
+    ans = client.models.generate_content(
         model=model,
         contents=contents,
         config=generate_content_config,
-    ):
-        print(chunk.text, end="")
+    )
+
+    return json.loads(ans.text)
 
 
 def generate_ai_ans(steps: str, style: str = '正式') -> Dict[str, Any]:
@@ -337,26 +341,6 @@ def generate_ai_ans(steps: str, style: str = '正式') -> Dict[str, Any]:
     4. 死亡風險評估（低/中/高）
     5. 腹瀉風險評估（低/中/高）
     6. 具體建議和警告
-
-    請以 JSON 格式回覆：
-    {{
-        "safety_score": 8,
-        "feasibility_score": 7,
-        "nutrition_score": 6,
-        "death_risk": "低",
-        "diarrhea_risk": "中",
-        "warnings": ["警告1", "警告2"],
-        "suggestions": ["建議1", "建議2"]
-    }}
-    {{
-        "name": "食譜名稱",
-        "ingredients": ["材料1", "材料2"],
-        "steps": ["步驟1", "步驟2"],
-        "cooking_time": "總時間",
-        "servings": "份量",
-        "difficulty": "難度",
-        "tips": "小貼士"
-    }}
     """
     
     try:
