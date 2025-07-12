@@ -1,7 +1,4 @@
-/* 隱藏直的與橫的拉桿 */
-body {
-  overflow: hidden;
-}
+
 
 #bouncingImage {
   position: absolute;

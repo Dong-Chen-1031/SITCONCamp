@@ -228,14 +228,16 @@
   <div class="flex items-center space-x-4">
     <input
       type="text"
-      class="time-input max-w-[80px] px-2 py-1 bg-white dark:bg-gray-700 border border-blue-300 dark:border-blue-600 rounded text-sm"
-      placeholder="10（分）"
+      class="time-input w-32 px-2 py-1 bg-white dark:bg-gray-700 border border-blue-300 dark:border-blue-600 rounded text-sm"
+      placeholder="10 分鐘"
     />
     <div class="flex space-x-4">
-      <button type="button" class="time-btn" data-value="5">5分</button>
-      <button type="button" class="time-btn" data-value="30">30分</button>
-      <button type="button" class="time-btn" data-value="720">12小時</button>
-      <button type="button" class="time-btn" data-value="525600">1年</button>
+      <p class="time-btn cursor-pointer hover:text-gray-700 hover:dark:text-gray-400" data-value="5 分鐘">5 分鐘</p>
+      <p class="time-btn cursor-pointer hover:text-gray-700 hover:dark:text-gray-400" data-value="10 分鐘">10 分鐘</p>
+      <p class="time-btn cursor-pointer hover:text-gray-700 hover:dark:text-gray-400" data-value="1 小時">1 小時</p>
+      <p class="time-btn cursor-pointer hover:text-gray-700 hover:dark:text-gray-400" data-value="1 天">1 天</p>
+      <p class="time-btn cursor-pointer hover:text-gray-700 hover:dark:text-gray-400" data-value="1 年">1 年</p>
+      <p class="time-btn cursor-pointer hover:text-gray-700 hover:dark:text-gray-400" data-value="適當">適當</p>
     </div>
   </div>
 </div>

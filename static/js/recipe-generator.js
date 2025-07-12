@@ -429,6 +429,15 @@ class RecipeGenerator {
                 blockElement.classList.remove('focused');
             });
         });
+
+        // 添加輸入事件監聽
+        const btn_time = blockElement.querySelectorAll(".time-btn");
+        btn_time.forEach(btn => {
+            btn.addEventListener('click', () => {
+                blockElement.querySelector('.time-input').value = btn.dataset.value;
+                this.updateBlockData(blockId);
+            });
+        });
         
         // 添加折疊/展開功能
         const header = blockElement.querySelector('.flex.items-center.justify-between');
@@ -695,7 +704,7 @@ class RecipeGenerator {
                 <!-- Food Image Placeholder -->
                 <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 text-center">
                     <div id="food-image-container" class="mb-4">
-                        <div class="w-full h-64 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                        <div class="w-full aspect-auto bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
                             <div class="text-gray-500 dark:text-gray-400">
                                 <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -705,7 +714,7 @@ class RecipeGenerator {
                             </div>
                         </div>
                     </div>
-                    <button onclick="recipeGenerator.generateFoodImage('${recipe.food_photo_prompt}')" 
+                    <button onclick="recipeGenerator.generateFoodImage('${recipe.food_photo_prompt}')" hidden
                             class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200">
                         🎨 生成食物照片
                     </button>
@@ -1453,7 +1462,7 @@ class RecipeGenerator {
     
     async generateFoodImage(prompt) {
         const imageContainer = document.getElementById('food-image-container');
-        const placeholder = imageContainer.querySelector('.w-full.h-64');
+        const placeholder = imageContainer.querySelector('.w-full.aspect-auto');
         
         // 顯示載入狀態
         placeholder.innerHTML = `
@@ -1480,7 +1489,7 @@ class RecipeGenerator {
                 placeholder.innerHTML = `
                     <img src="data:image/jpeg;base64,${result.image}" 
                          alt="AI 生成的食物照片" 
-                         class="w-full h-64 object-cover rounded-lg shadow-md">
+                         class="w-full aspect-auto object-cover rounded-lg shadow-md">
                 `;
                 this.showSuccess('食物照片生成成功！');
             } else {
@@ -1521,6 +1530,8 @@ class RecipeGenerator {
         }
     }
 }
+
+
 
 // 初始化
 const recipeGenerator = new RecipeGenerator();
