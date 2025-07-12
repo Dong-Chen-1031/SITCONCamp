@@ -218,28 +218,25 @@ class RecipeGenerator {
         // 工具箱拖放（刪除功能）
         if (toolbox) {
             toolbox.addEventListener('dragover', (e) => {
-                const blockId = e.dataTransfer.getData('text/block-id');
-                console.log('Drag over toolbox:', e.dataTransfer);
-                if (blockId) {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
-                    toolbox.classList.add('delete-zone');
-                    
-                    // 添加刪除提示
-                    if (!toolbox.querySelector('.delete-hint')) {
-                        const hint = document.createElement('div');
-                        hint.className = 'delete-hint absolute inset-0 flex items-center justify-center bg-red-100 dark:bg-red-900 bg-opacity-90 rounded-lg z-50';
-                        hint.innerHTML = `
-                            <div class="text-center text-red-600 dark:text-red-400">
-                                <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                                <p class="text-sm font-medium">拖放到這裡刪除</p>
-                            </div>
-                        `;
-                        toolbox.appendChild(hint);
-                    }
+                console.log('Drag over toolbox:', e);
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                toolbox.classList.add('delete-zone');
+                
+                // 添加刪除提示
+                if (!toolbox.querySelector('.delete-hint')) {
+                    const hint = document.createElement('div');
+                    hint.className = 'delete-hint absolute inset-0 flex items-center justify-center bg-red-100 dark:bg-red-900 bg-opacity-90 rounded-lg z-50';
+                    hint.innerHTML = `
+                        <div class="text-center text-red-600 dark:text-red-400">
+                            <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </div>
+                    `;
+                    toolbox.appendChild(hint);
                 }
+                
             });
             
             toolbox.addEventListener('dragleave', (e) => {
