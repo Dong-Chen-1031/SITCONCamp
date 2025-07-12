@@ -27,6 +27,8 @@ class Config:
     TESTING = False
 
 
+SYSTEM_PROMPT = """"""
+
 class DevelopmentConfig(Config):
     """開發環境配置"""
     DEBUG = True

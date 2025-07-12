@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import List, Dict, Any, Optional
 from functools import wraps
 import re
+from config import SYSTEM_PROMPT
 import time
 import dotenv
 
@@ -225,7 +226,7 @@ contents = [
     types.Content(
         role="user",
         parts=[
-            types.Part.from_text(text="""INSERT_INPUT_HERE"""),
+            types.Part.from_text(text=SYSTEM_PROMPT),
         ],
     ),
 ]
