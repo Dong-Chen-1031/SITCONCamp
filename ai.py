@@ -6,6 +6,7 @@ from google import genai
 from google.genai import types
 import os
 import json
+from objprint import op
 
 api_key = os.environ.get('GEMINI_API_KEY')
 
@@ -41,7 +42,7 @@ SYSTEM_PROMPT="""你是一個創意十足的 AI 食譜生成器，專門將用�
 - **綜合評分（1-10）**：基於安全性、可行性、創意性的整體評分
 - **可改進之處**：建設性的改進建議，讓食譜更安全或更美味
 - **整體總結**：簡潔有力的總結，突出食譜特色
-- **生成食物照片的prompt**：詳細描述用於AI繪圖的提示詞
+- **生成食物照片的prompt**：詳細描述用於AI繪圖的提示詞，請使用英文
 - **各項內容整體原因分析**：解釋各項評分的理由和依據
 
 ## ⚠️ 注意事項：
@@ -59,62 +60,62 @@ SYSTEM_PROMPT="""你是一個創意十足的 AI 食譜生成器，專門將用�
 def generate(str_: str):
     generate_content_config = types.GenerateContentConfig(
         thinking_config = types.ThinkingConfig(
-            thinking_budget=-1,
+            thinking_budget=0,
         ),
         response_mime_type="application/json",
         response_schema=types.Schema(
             type = types.Type.OBJECT,
             properties = {
-                "食譜名稱": types.Schema(
-                    type = types.Type.STRING,
-                ),
-                "料理過後的結果": types.Schema(
-                    type = types.Type.STRING,
-                ),
-                "腹瀉率％": types.Schema(
-                    type = types.Type.NUMBER,
-                ),
-                "飽食度％": types.Schema(
-                    type = types.Type.NUMBER,
-                ),
-                "綜合評分（1-10）": types.Schema(
-                    type = types.Type.INTEGER,
-                ),
-                "可改進之處": types.Schema(
-                    type = types.Type.STRING,
-                ),
-                "整體總結": types.Schema(
-                    type = types.Type.STRING,
-                ),
-                "生成食物照片的prompt": types.Schema(
-                    type = types.Type.STRING,
-                ),
-                "食品安全性（1-10分）": types.Schema(
-                    type = types.Type.INTEGER,
-                ),
-                "各項內容整體原因分析": types.Schema(
-                    type = types.Type.STRING,
-                ),
-                "操作可行性（1-10分）": types.Schema(
-                    type = types.Type.INTEGER,
-                ),
-                "營養合理性（1-10分）": types.Schema(
-                    type = types.Type.INTEGER,
-                ),
-                "死亡風險評估（低/中/高）": types.Schema(
-                    type = types.Type.STRING,
-                    enum = ["低", "中", "高"],
-                ),
-                "腹瀉風險評估（低/中/高）": types.Schema(
-                    type = types.Type.STRING,
-                    enum = ["低", "中", "高"],
-                ),
+            "food_name": types.Schema(
+                type = types.Type.STRING,
+            ),
+            "final_result": types.Schema(
+                type = types.Type.STRING,
+            ),
+            "diarrhea_rate_percent": types.Schema(
+                type = types.Type.NUMBER,
+            ),
+            "satiety_percent": types.Schema(
+                type = types.Type.NUMBER,
+            ),
+            "overall_score": types.Schema(
+                type = types.Type.INTEGER,
+            ),
+            "improvement_suggestions": types.Schema(
+                type = types.Type.STRING,
+            ),
+            "summary": types.Schema(
+                type = types.Type.STRING,
+            ),
+            "food_photo_prompt": types.Schema(
+                type = types.Type.STRING,
+            ),
+            "food_safety_score": types.Schema(
+                type = types.Type.INTEGER,
+            ),
+            "reasoning": types.Schema(
+                type = types.Type.STRING,
+            ),
+            "feasibility_score": types.Schema(
+                type = types.Type.INTEGER,
+            ),
+            "nutritional_value": types.Schema(
+                type = types.Type.INTEGER,
+            ),
+            "death_risk": types.Schema(
+                type = types.Type.STRING,
+                enum = ["Low", "Medium", "High"],
+            ),
+            "diarrhea_risk": types.Schema(
+                type = types.Type.STRING,
+                enum = ["Low", "Medium", "High"],
+            ),
             },
         ),
         system_instruction=[
             types.Part.from_text(text=SYSTEM_PROMPT),
         ],
-    )
+        )
     contents = [
         types.Content(
             role="user",
@@ -128,5 +129,16 @@ def generate(str_: str):
         contents=contents,
         config=generate_content_config,
     )
-
+    op(json.loads(ans.text))
     return json.loads(ans.text)
+
+
+if __name__ == "__main__":
+    generate(
+        """1. 使用混寧土粉製作麵團，並以水泥攪拌車攪拌10分鐘
+2. 將麵團放入烤箱，設定溫度為200
+3. 使用噴火龍炙燒表面，直到金黃色
+4. 最後將麵團放入果汁機，打成細膩狀糊糊
+5. 使用火龍果汁調味，並加入少許鹽和胡椒粉
+6. 最後將混合物倒入模具，冷藏30分鐘後取出，切成小塊享用
+""")
