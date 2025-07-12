@@ -1,3 +1,7 @@
+import base64
+import os
+from google import genai
+from google.genai import types
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 import json
 import os
@@ -187,11 +191,22 @@ def suggest_ingredients():
 def blocks_to_description(blocks: List[Dict[str, Any]]) -> str:
     """將積木陣列轉換為自然語言描述"""
     descriptions = []
+    print(blocks)
     
     for i, block in enumerate(blocks, 1):
         if 'description' in block:
             # 自由輸入積木
             descriptions.append(f"{i}. {block['description']}")
+        if 'amount' in block:
+            # 食材積木
+            ingredient = block.get('ingredient', '')
+            amount = block.get('amount', '')
+            
+            desc = f"{i}. 使用 {ingredient}"
+            if amount:
+                desc += f" {amount}"
+            
+            descriptions.append(desc)
         else:
             # 結構化積木
             action = block.get('action', '')
@@ -205,96 +220,8 @@ def blocks_to_description(blocks: List[Dict[str, Any]]) -> str:
                 desc += f"，{time}"
             
             descriptions.append(desc)
-    
+    print('\n'.join(descriptions))
     return '\n'.join(descriptions)
-
-# To run this code you need to install the following dependencies:
-# pip install google-genai
-
-import base64
-import os
-from google import genai
-from google.genai import types
-
-
-client = genai.Client(
-    api_key=api_key,
-)
-
-model = "gemini-2.5-flash"
-contents = [
-    types.Content(
-        role="user",
-        parts=[
-            types.Part.from_text(text=SYSTEM_PROMPT),
-        ],
-    ),
-]
-def generate():
-    generate_content_config = types.GenerateContentConfig(
-        thinking_config = types.ThinkingConfig(
-            thinking_budget=-1,
-        ),
-        response_mime_type="application/json",
-        response_schema=genai.types.Schema(
-            type = genai.types.Type.OBJECT,
-            properties = {
-                "食譜名稱": genai.types.Schema(
-                    type = genai.types.Type.STRING,
-                ),
-                "料理過後的結果": genai.types.Schema(
-                    type = genai.types.Type.STRING,
-                ),
-                "腹瀉率％": genai.types.Schema(
-                    type = genai.types.Type.NUMBER,
-                ),
-                "飽食度％": genai.types.Schema(
-                    type = genai.types.Type.NUMBER,
-                ),
-                "綜合評分（1-10）": genai.types.Schema(
-                    type = genai.types.Type.INTEGER,
-                ),
-                "可改進之處": genai.types.Schema(
-                    type = genai.types.Type.STRING,
-                ),
-                "整體總結": genai.types.Schema(
-                    type = genai.types.Type.STRING,
-                ),
-                "生成食物照片的prompt": genai.types.Schema(
-                    type = genai.types.Type.STRING,
-                ),
-                "食品安全性（1-10分）": genai.types.Schema(
-                    type = genai.types.Type.INTEGER,
-                ),
-                "各項內容整體原因分析": genai.types.Schema(
-                    type = genai.types.Type.STRING,
-                ),
-                "操作可行性（1-10分）": genai.types.Schema(
-                    type = genai.types.Type.INTEGER,
-                ),
-                "營養合理性（1-10分）": genai.types.Schema(
-                    type = genai.types.Type.INTEGER,
-                ),
-                "死亡風險評估（低/中/高）": genai.types.Schema(
-                    type = genai.types.Type.STRING,
-                    enum = ["低", "中", "高"],
-                ),
-                "腹瀉風險評估（低/中/高）": genai.types.Schema(
-                    type = genai.types.Type.STRING,
-                    enum = ["低", "中", "高"],
-                ),
-            },
-        ),
-    )
-
-    for chunk in client.models.generate_content_stream(
-        model=model,
-        contents=contents,
-        config=generate_content_config,
-    ):
-        print(chunk.text, end="")
-    return chunk.text
-
 
 def generate_ai_ans(steps: str, style: str = '正式') -> Dict[str, Any]:
     """使用 AI 生成完整食譜"""
@@ -338,26 +265,6 @@ def generate_ai_ans(steps: str, style: str = '正式') -> Dict[str, Any]:
     4. 死亡風險評估（低/中/高）
     5. 腹瀉風險評估（低/中/高）
     6. 具體建議和警告
-
-    請以 JSON 格式回覆：
-    {{
-        "safety_score": 8,
-        "feasibility_score": 7,
-        "nutrition_score": 6,
-        "death_risk": "低",
-        "diarrhea_risk": "中",
-        "warnings": ["警告1", "警告2"],
-        "suggestions": ["建議1", "建議2"]
-    }}
-    {{
-        "name": "食譜名稱",
-        "ingredients": ["材料1", "材料2"],
-        "steps": ["步驟1", "步驟2"],
-        "cooking_time": "總時間",
-        "servings": "份量",
-        "difficulty": "難度",
-        "tips": "小貼士"
-    }}
     """
     
     try:
