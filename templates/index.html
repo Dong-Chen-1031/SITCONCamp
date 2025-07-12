@@ -48,7 +48,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left Panel - Block Toolbox -->
-            <div class="lg:col-span-1 order-2 lg:order-1">
+            <div class="lg:col-span-1 order-2 lg:order-1 tools">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4"><span class="material-icons align-middle">build</span> 積木工具箱</h3>
                     
@@ -149,9 +149,9 @@
             <div class="lg:col-span-2 order-1 lg:order-2">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">🔧 工作區域</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white"><span class="material-icons align-middle">space_dashboard</span> 工作區域</h3>
                         <button id="generate-recipe" class="w-full sm:w-auto px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
-                            <span class="material-icons align-middle">auto_awesome</span> 生成食譜
+                            <span class="material-icons align-middle">auto_awesome</span> 生成評估
                         </button>
                     </div>
                     
@@ -179,9 +179,9 @@
         <!-- Recipe Result Section -->
         <div class="mt-8">
             <div id="recipe-result" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hidden">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4"><span class="material-icons align-middle">restaurant</span> 生成的食譜</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4"><span class="material-icons align-middle">assessment</span> AI 料理評估報告</h3>
                 <div id="recipe-content">
-                    <!-- Recipe will be displayed here -->
+                    <!-- Recipe evaluation will be displayed here -->
                 </div>
             </div>
         </div>

@@ -204,12 +204,9 @@ class RecipeGenerator {
         // 工具箱拖放（刪除功能）
         if (toolbox) {
             toolbox.addEventListener('dragover', (e) => {
-                const blockId = e.dataTransfer.getData('text/block-id');
-                if (blockId) {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
-                    toolbox.classList.add('delete-zone');
-                }
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                toolbox.classList.add('delete-zone');
             });
             
             toolbox.addEventListener('dragleave', (e) => {
@@ -664,92 +661,164 @@ class RecipeGenerator {
             <div class="space-y-6">
                 <!-- Recipe Header -->
                 <div class="text-center border-b border-gray-200 dark:border-gray-700 pb-6">
-                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">${recipe.name}</h2>
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">${recipe.food_name}</h2>
                     <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                         <span class="flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"></path>
                             </svg>
-                            ${recipe.cooking_time}
+                            綜合評分: ${recipe.overall_score}/10
                         </span>
                         <span class="flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                             </svg>
-                            ${recipe.servings}
+                            飽食度: ${recipe.satiety_percent}%
                         </span>
                         <span class="flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                             </svg>
-                            ${recipe.difficulty}
+                            死亡風險: ${recipe.death_risk}
                         </span>
                     </div>
                 </div>
                 
-                <!-- Ingredients -->
-                <div class="bg-blue-50 dark:bg-blue-900 rounded-lg p-6">
-                    <h3 class="text-xl font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                        </svg>
-                        材料清單
-                    </h3>
-                    <ul class="space-y-2">
-                        ${recipe.ingredients.map(ingredient => `
-                            <li class="flex items-center text-blue-800 dark:text-blue-200">
-                                <svg class="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                <!-- Food Image Placeholder -->
+                <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 text-center">
+                    <div id="food-image-container" class="mb-4">
+                        <div class="w-full h-64 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                            <div class="text-gray-500 dark:text-gray-400">
+                                <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
-                                ${ingredient}
-                            </li>
-                        `).join('')}
-                    </ul>
+                                <p class="text-sm">食物照片生成中...</p>
+                                <p class="text-xs text-gray-400 mt-1">AI 提示詞: "${recipe.food_photo_prompt}"</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="recipeGenerator.generateFoodImage('${recipe.food_photo_prompt}')" 
+                            class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200">
+                        🎨 生成食物照片
+                    </button>
                 </div>
                 
-                <!-- Steps -->
+                <!-- Final Result -->
                 <div class="bg-green-50 dark:bg-green-900 rounded-lg p-6">
                     <h3 class="text-xl font-semibold text-green-900 dark:text-green-100 mb-4 flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
                         </svg>
-                        製作步驟
+                        料理成品
                     </h3>
-                    <ol class="space-y-3">
-                        ${recipe.steps.map((step, index) => `
-                            <li class="flex items-start text-green-800 dark:text-green-200">
-                                <span class="bg-green-200 dark:bg-green-700 text-green-800 dark:text-green-200 rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium mr-3 mt-0.5 flex-shrink-0">
-                                    ${index + 1}
-                                </span>
-                                <span>${step}</span>
-                            </li>
-                        `).join('')}
-                    </ol>
+                    <div class="text-green-800 dark:text-green-200 leading-relaxed">
+                        ${recipe.final_result}
+                    </div>
                 </div>
                 
-                <!-- Tips -->
-                ${recipe.tips ? `
-                    <div class="bg-yellow-50 dark:bg-yellow-900 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-yellow-900 dark:text-yellow-100 mb-4 flex items-center">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                            </svg>
-                            小貼士
-                        </h3>
-                        <p class="text-yellow-800 dark:text-yellow-200">${recipe.tips}</p>
+                <!-- Safety & Analysis Scores -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">${recipe.food_safety_score}/10</div>
+                        <div class="text-sm text-blue-800 dark:text-blue-200">食品安全</div>
                     </div>
-                ` : ''}
+                    <div class="bg-green-50 dark:bg-green-900 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-green-600 dark:text-green-400">${recipe.feasibility_score}/10</div>
+                        <div class="text-sm text-green-800 dark:text-green-200">可行性</div>
+                    </div>
+                    <div class="bg-purple-50 dark:bg-purple-900 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">${recipe.nutritional_value}/10</div>
+                        <div class="text-sm text-purple-800 dark:text-purple-200">營養價值</div>
+                    </div>
+                    <div class="bg-red-50 dark:bg-red-900 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-red-600 dark:text-red-400">${recipe.diarrhea_rate_percent}%</div>
+                        <div class="text-sm text-red-800 dark:text-red-200">腹瀉機率</div>
+                    </div>
+                </div>
+                
+                <!-- Risk Assessment -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-orange-50 dark:bg-orange-900 rounded-lg p-4">
+                        <h4 class="font-semibold text-orange-900 dark:text-orange-100 mb-2 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            死亡風險
+                        </h4>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium ${
+                            recipe.death_risk === 'Low' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
+                            recipe.death_risk === 'Medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
+                            'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+                        }">
+                            ${recipe.death_risk}
+                        </span>
+                    </div>
+                    <div class="bg-yellow-50 dark:bg-yellow-900 rounded-lg p-4">
+                        <h4 class="font-semibold text-yellow-900 dark:text-yellow-100 mb-2 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            腹瀉風險
+                        </h4>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium ${
+                            recipe.diarrhea_risk === 'Low' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
+                            recipe.diarrhea_risk === 'Medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
+                            'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+                        }">
+                            ${recipe.diarrhea_risk}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Improvement Suggestions -->
+                <div class="bg-indigo-50 dark:bg-indigo-900 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold text-indigo-900 dark:text-indigo-100 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                        改進建議
+                    </h3>
+                    <div class="text-indigo-800 dark:text-indigo-200 leading-relaxed">
+                        ${recipe.improvement_suggestions}
+                    </div>
+                </div>
+                
+                <!-- Analysis & Reasoning -->
+                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        分析原因
+                    </h3>
+                    <div class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        ${recipe.reasoning}
+                    </div>
+                </div>
+                
+                <!-- Summary -->
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900 dark:to-pink-900 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold text-purple-900 dark:text-purple-100 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                        總結
+                    </h3>
+                    <div class="text-purple-800 dark:text-purple-200 leading-relaxed font-medium">
+                        ${recipe.summary}
+                    </div>
+                </div>
                 
                 <!-- Actions -->
                 <div class="flex flex-wrap gap-4 justify-center pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <button onclick="recipeGenerator.validateRecipe()" class="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors duration-200">
-                        🔍 安全評估
-                    </button>
                     <button onclick="recipeGenerator.shareRecipe()" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200">
-                        📤 分享食譜
+                        � 分享評估
                     </button>
                     <button onclick="recipeGenerator.downloadRecipe()" class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors duration-200">
-                        📥 下載食譜
+                        � 下載評估
+                    </button>
+                    <button onclick="recipeGenerator.generateFoodImage('${recipe.food_photo_prompt}')" class="px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200">
+                        🎨 重新生成照片
                     </button>
                 </div>
             </div>
@@ -879,26 +948,26 @@ class RecipeGenerator {
     }
     
     shareRecipe() {
-        const recipeTitle = document.querySelector('#recipe-content h2')?.textContent || 'AI 生成的創意食譜';
+        const recipeTitle = document.querySelector('#recipe-content h2')?.textContent || 'AI 生成的創意料理評估';
         const url = window.location.href;
         
         if (navigator.share) {
             navigator.share({
                 title: recipeTitle,
-                text: '看看我用 AI 創作的創意食譜！',
+                text: '看看我用 AI 創作的創意料理評估報告！',
                 url: url
             });
         } else {
             // 複製到剪貼板
             navigator.clipboard.writeText(url).then(() => {
-                this.showSuccess('食譜連結已複製到剪貼板！');
+                this.showSuccess('評估報告連結已複製到剪貼板！');
             });
         }
     }
     
     downloadRecipe() {
         const recipeContent = document.getElementById('recipe-content').innerHTML;
-        const title = document.querySelector('#recipe-content h2')?.textContent || 'AI 食譜';
+        const title = document.querySelector('#recipe-content h2')?.textContent || 'AI 料理評估';
         
         const htmlContent = `
             <!DOCTYPE html>
@@ -925,7 +994,7 @@ class RecipeGenerator {
         link.click();
         
         URL.revokeObjectURL(url);
-        this.showSuccess('食譜已下載！');
+        this.showSuccess('評估報告已下載！');
     }
     
     showLoading() {
@@ -1295,7 +1364,7 @@ class RecipeGenerator {
                     </button>
                     <button onclick="recipeGenerator.generateRecipe(); this.parentElement.parentElement.parentElement.remove();" 
                             class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors">
-                        🚀 直接生成食譜
+                        🚀 直接生成評估
                     </button>
                 </div>
             </div>
@@ -1320,7 +1389,7 @@ class RecipeGenerator {
                 
                 <div class="space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">生成食譜</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">生成料理評估</span>
                         <kbd class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded">Ctrl+Enter</kbd>
                     </div>
                     
@@ -1372,6 +1441,37 @@ class RecipeGenerator {
                 modal.remove();
             }
         });
+    }
+    
+    generateFoodImage(prompt) {
+        const imageContainer = document.getElementById('food-image-container');
+        const placeholder = imageContainer.querySelector('.w-full.h-64');
+        
+        // 顯示載入狀態
+        placeholder.innerHTML = `
+            <div class="text-gray-500 dark:text-gray-400">
+                <div class="loading-spinner mx-auto mb-2"></div>
+                <p class="text-sm">正在生成食物照片...</p>
+                <p class="text-xs text-gray-400 mt-1">提示詞: "${prompt}"</p>
+            </div>
+        `;
+        
+        // TODO: 實際的圖片生成 API 調用
+        // 這裡預留給後端圖片生成功能
+        console.log('準備生成圖片，提示詞:', prompt);
+        
+        // 模擬生成過程
+        setTimeout(() => {
+            placeholder.innerHTML = `
+                <div class="text-gray-500 dark:text-gray-400">
+                    <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <p class="text-sm">圖片生成功能開發中...</p>
+                    <p class="text-xs text-gray-400 mt-1">提示詞: "${prompt}"</p>
+                </div>
+            `;
+        }, 2000);
     }
 }
 

@@ -156,61 +156,35 @@ def generate_recipe():
         }), 500
 
 
-@app.route('/api/suggest-ingredients', methods=['POST'])
-def suggest_ingredients():
-    """根據現有材料建議食譜"""
-    try:
-        data = request.get_json()
-        available_ingredients = data.get('ingredients', [])
+# @app.route('/api/suggest-ingredients', methods=['POST'])
+# def suggest_ingredients():
+#     """根據現有材料建議食譜"""
+#     try:
+#         data = request.get_json()
+#         available_ingredients = data.get('ingredients', [])
         
-        if not available_ingredients:
-            return jsonify({
-                'error': '請提供可用材料',
-                'status': 'error'
-            }), 400
+#         if not available_ingredients:
+#             return jsonify({
+#                 'error': '請提供可用材料',
+#                 'status': 'error'
+#             }), 400
         
-        # 生成建議食譜
-        suggestions = generate_ingredient_suggestions(available_ingredients)
+#         # 生成建議食譜
+#         suggestions = generate_ingredient_suggestions(available_ingredients)
         
-        return jsonify({
-            'suggestions': suggestions,
-            'status': 'success'
-        })
+#         return jsonify({
+#             'suggestions': suggestions,
+#             'status': 'success'
+#         })
         
-    except Exception as e:
-        return jsonify({
-            'error': f'生成建議時發生錯誤: {str(e)}',
-            'status': 'error'
-        }), 500
+#     except Exception as e:
+#         return jsonify({
+#             'error': f'生成建議時發生錯誤: {str(e)}',
+#             'status': 'error'
+#         }), 500
 
 
-from google import genai
-import os
-import base64
 
-def generate_picture(prompt: str) -> str:
-    """生成食物圖片,回傳 base64 編碼"""
-    client = genai.Client(api_key=api_key)
-
-    result = client.models.generate_images(
-        model="models/imagen-4.0-generate-preview-06-06",
-        prompt=prompt,
-        config=dict(
-            number_of_images=1,
-            output_mime_type="image/jpeg",
-            person_generation="ALLOW_ADULT",
-            aspect_ratio="1:1",
-        ),
-    )
-
-    if not result.generated_images:
-        print("No images generated.")
-        return
-
-    img_bytes = result.generated_images[0].image.image_bytes
-    # 把二進位圖轉成 base64 字串，前端才能顯示
-    b64 = base64.b64encode(img_bytes).decode('utf-8')
-    return b64
 
 
 

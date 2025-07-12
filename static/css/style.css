@@ -184,9 +184,9 @@ p {
 .block-connector::before {
     content: '';
     position: absolute;
-    bottom: 0px;
+    top: -8px;
     left: 50%;
-    transform: translateX(-50%) rotate(180deg);
+    transform: translateX(-50%);
     width: 0;
     height: 0;
     border-left: 4px solid transparent;
@@ -260,17 +260,23 @@ p {
 
 /* 載入動畫 */
 .loading-spinner {
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #3B82F6;
-    border-radius: 50%;
     width: 40px;
     height: 40px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #3b82f6;
+    border-radius: 50%;
     animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* 深色模式下的載入動畫 */
+.dark .loading-spinner {
+    border-color: #374151;
+    border-top-color: #60a5fa;
 }
 
 /* 漸變按鈕 */
@@ -710,6 +716,11 @@ p {
     border-radius: 0.5rem;
     position: relative;
     overflow: hidden;
+}
+
+.tools{
+    padding: 0px !important;
+    margin: 24px !important; 
 }
 
 .delete-zone::before {
