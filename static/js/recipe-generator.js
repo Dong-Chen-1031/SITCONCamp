@@ -676,56 +676,44 @@ class RecipeGenerator {
         
         contentDiv.innerHTML = `
             <div class="space-y-6">
-                <!-- Recipe Header -->
                 <div class="text-center border-b border-gray-200 dark:border-gray-700 pb-6">
                     <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">${recipe.food_name}</h2>
                     <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                         <span class="flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"></path>
-                            </svg>
+                            <span class="material-icons text-base mr-1">stars</span>
                             綜合評分: ${recipe.overall_score}/10
                         </span>
                         <span class="flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                            </svg>
+                            <span class="material-icons text-base mr-1">favorite</span>
                             飽食度: ${recipe.satiety_percent}%
                         </span>
                         <span class="flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                            </svg>
+                            <span class="material-icons text-base mr-1">warning</span>
                             死亡風險: ${recipe.death_risk}
                         </span>
                     </div>
                 </div>
                 
-                <!-- Food Image Placeholder -->
                 <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 text-center">
                     <div id="food-image-container" class="mb-4">
                         <div class="w-full aspect-auto bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
                             <div class="text-gray-500 dark:text-gray-400">
-                                <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
+                                <span class="material-icons text-7xl mx-auto mb-2">image</span>
                                 <p class="text-sm">食物照片生成中...</p>
                                 <p class="text-xs text-gray-400 mt-1">AI 提示詞: "${recipe.food_photo_prompt}"</p>
                             </div>
                         </div>
                     </div>
                     <button onclick="recipeGenerator.generateFoodImage('${recipe.food_photo_prompt}')" hidden
-                            class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200">
-                        🎨 生成食物照片
+                            class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200 flex items-center justify-center mx-auto">
+                        <span class="material-icons mr-2">palette</span>
+                        生成食物照片
                     </button>
                 </div>
                 
-                <!-- Final Result -->
                 <div class="bg-green-50 dark:bg-green-900 rounded-lg p-6">
                     <h3 class="text-xl font-semibold text-green-900 dark:text-green-100 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-                        </svg>
+                        <span class="material-icons text-xl mr-2">military_tech</span>
                         料理成品
                     </h3>
                     <div class="text-green-800 dark:text-green-200 leading-relaxed">
@@ -733,7 +721,6 @@ class RecipeGenerator {
                     </div>
                 </div>
                 
-                <!-- Safety & Analysis Scores -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 text-center">
                         <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">${recipe.food_safety_score}/10</div>
@@ -753,13 +740,10 @@ class RecipeGenerator {
                     </div>
                 </div>
                 
-                <!-- Risk Assessment -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-orange-50 dark:bg-orange-900 rounded-lg p-4">
                         <h4 class="font-semibold text-orange-900 dark:text-orange-100 mb-2 flex items-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                            </svg>
+                            <span class="material-icons text-base mr-2">warning</span>
                             死亡風險
                         </h4>
                         <span class="px-3 py-1 rounded-full text-sm font-medium ${
@@ -772,9 +756,7 @@ class RecipeGenerator {
                     </div>
                     <div class="bg-yellow-50 dark:bg-yellow-900 rounded-lg p-4">
                         <h4 class="font-semibold text-yellow-900 dark:text-yellow-100 mb-2 flex items-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                            <span class="material-icons text-base mr-2">error</span>
                             腹瀉風險
                         </h4>
                         <span class="px-3 py-1 rounded-full text-sm font-medium ${
@@ -787,12 +769,9 @@ class RecipeGenerator {
                     </div>
                 </div>
                 
-                <!-- Improvement Suggestions -->
                 <div class="bg-indigo-50 dark:bg-indigo-900 rounded-lg p-6">
                     <h3 class="text-xl font-semibold text-indigo-900 dark:text-indigo-100 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                        </svg>
+                        <span class="material-icons text-xl mr-2">lightbulb</span>
                         改進建議
                     </h3>
                     <div class="text-indigo-800 dark:text-indigo-200 leading-relaxed">
@@ -800,12 +779,9 @@ class RecipeGenerator {
                     </div>
                 </div>
                 
-                <!-- Analysis & Reasoning -->
                 <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
+                        <span class="material-icons text-xl mr-2">analytics</span>
                         分析原因
                     </h3>
                     <div class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -813,12 +789,9 @@ class RecipeGenerator {
                     </div>
                 </div>
                 
-                <!-- Summary -->
                 <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900 dark:to-pink-900 rounded-lg p-6">
                     <h3 class="text-xl font-semibold text-purple-900 dark:text-purple-100 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
-                        </svg>
+                        <span class="material-icons text-xl mr-2">star</span>
                         總結
                     </h3>
                     <div class="text-purple-800 dark:text-purple-200 leading-relaxed font-medium">
@@ -826,16 +799,18 @@ class RecipeGenerator {
                     </div>
                 </div>
                 
-                <!-- Actions -->
                 <div class="flex flex-wrap gap-4 justify-center pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <button onclick="recipeGenerator.shareRecipe()" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200">
-                        � 分享評估
+                    <button onclick="recipeGenerator.shareRecipe()" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 flex items-center">
+                        <span class="material-icons mr-2">share</span>
+                        分享評估
                     </button>
-                    <button onclick="recipeGenerator.downloadRecipe()" class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors duration-200">
-                        � 下載評估
+                    <button onclick="recipeGenerator.downloadRecipe()" class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors duration-200 flex items-center">
+                        <span class="material-icons mr-2">download</span>
+                        下載評估
                     </button>
-                    <button onclick="recipeGenerator.generateFoodImage('${recipe.food_photo_prompt}')" class="px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200">
-                        🎨 重新生成照片
+                    <button onclick="recipeGenerator.generateFoodImage('${recipe.food_photo_prompt}')" class="px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200 flex items-center">
+                        <span class="material-icons mr-2">palette</span>
+                        重新生成照片
                     </button>
                 </div>
             </div>
