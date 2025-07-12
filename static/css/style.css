@@ -13,11 +13,83 @@
 /* 基本樣式 */
 * {
     transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    box-sizing: border-box; /* Ensure padding and border are included in element's total width and height */
 }
 
 body {
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
+    font-family: 'Noto Sans TC', "Inter", 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Use Noto Sans TC as primary font */
+    line-height: 1.7; /* Increased line height for better readability */
+    margin: 0;
+    padding: 0;
+    background-color: var(--light-bg); /* Use CSS variable for background */
+    color: var(--secondary-color); /* Use CSS variable for text color */
+}
+
+/* Improve heading styles for better hierarchy */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Noto Sans TC', "Inter", 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700; /* Bold headings */
+    margin-top: 1.5em; /* Add space above headings */
+    margin-bottom: 0.5em; /* Add space below headings */
+    color: var(--dark-color); /* Use CSS variable for heading color */
+}
+
+h1 {
+    font-size: 2.5rem; /* Larger size for main title */
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+/* Adjust spacing for paragraphs and text elements */
+p {
+    margin-bottom: 1em;
+}
+
+/* Improve container padding */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 1.5rem; /* Increased padding */
+}
+
+@media (min-width: 640px) {
+    .container {
+        padding: 2rem; /* Further increased padding on larger screens */
+    }
+}
+
+/* Adjust spacing for specific sections if needed, based on HTML structure */
+/* Example: Add more space below header */
+.shadow-sm.border-b {
+    margin-bottom: 2rem; /* Add space below the header */
+}
+
+/* Adjust spacing within the main grid layout */
+.grid.gap-8 > div {
+    padding: 1.5rem; /* Add padding to grid items */
+    margin-bottom: 1.5rem; /* Add space between grid items */
+}
+
+/* Adjust spacing within block toolbox and workspace */
+.bg-white.dark\:bg-gray-800.rounded-lg.shadow-sm.border.p-6 {
+    padding: 1.5rem; /* Ensure consistent padding */
+}
+
+/* Adjust spacing for quick actions section */
+.mt-6.pt-4.border-t {
+    margin-top: 1.5rem; /* Adjust top margin */
+    padding-top: 1.5rem; /* Adjust top padding */
+}
+
+/* Adjust spacing for recipe result section */
+.mt-8 {
+    margin-top: 2rem; /* Adjust top margin */
 }
 
 /* 深色模式 */

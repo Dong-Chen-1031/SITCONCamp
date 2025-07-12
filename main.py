@@ -24,6 +24,11 @@ def about():
     """關於頁面"""
     return render_template('about.html')
 
+@app.route('/open')
+def about():
+    """關於頁面"""
+    return render_template('open.html')
+
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
