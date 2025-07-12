@@ -132,7 +132,7 @@ def generate(str_: str, style:str="不指定"):
         contents=contents,
         config=generate_content_config,
     )
-    op(json.loads(ans.text))
+    # op(json.loads(ans.text))
     return json.loads(ans.text)
 
 
@@ -168,7 +168,7 @@ def blocks_to_description(blocks: List[Dict[str, Any]]) -> str:
                 desc += f"，{time}"
             
             descriptions.append(desc)
-    print('\n'.join(descriptions))
+    # print('\n'.join(descriptions))
     return '\n'.join(descriptions)
 
 

@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: #111;
+}
+
+#bouncingImage {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  pointer-events: none;
+}

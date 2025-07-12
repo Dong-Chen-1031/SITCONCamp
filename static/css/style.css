@@ -184,9 +184,9 @@ p {
 .block-connector::before {
     content: '';
     position: absolute;
-    top: -8px;
+    bottom: 0px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) rotate(180deg);
     width: 0;
     height: 0;
     border-left: 4px solid transparent;

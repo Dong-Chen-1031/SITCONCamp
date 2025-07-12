@@ -384,6 +384,8 @@ class RecipeGenerator {
         const removeBtn = blockElement.querySelector('.remove-block');
         removeBtn.addEventListener('click', () => {
             this.removeBlock(blockId);
+        //TODO:
+            this.showSuccess('積木已刪除！');
         });
         
         // 添加觸控長按刪除（行動裝置友好）
@@ -519,6 +521,8 @@ class RecipeGenerator {
                 this.blocks = this.blocks.filter(block => block.id !== blockId);
                 this.toggleEmptyState();
                 this.updateStepNumbers();
+                this.updateBlockOrder();
+
                 this.updateConnectors();
             }, 300);
         }
@@ -606,10 +610,10 @@ class RecipeGenerator {
             }
         });
         
-        if (hasEmptyBlocks) {
-            this.showError('請填寫所有積木的必要欄位！');
-            return;
-        }
+        // if (hasEmptyBlocks) {
+        //     this.showError('請填寫所有積木的必要欄位！');
+        //     return;
+        // }
         
         // 顯示載入狀態
         this.showLoading();
