@@ -133,6 +133,44 @@ body {
     background-color: rgba(59, 130, 246, 0.1);
 }
 
+/* 刪除區域樣式 */
+.delete-zone {
+    position: relative;
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 2px dashed #ef4444;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.dark .delete-zone {
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+.delete-hint {
+    animation: fadeIn 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+/* 刪除動畫 */
+@keyframes deleteAnimation {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8) rotateZ(5deg);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5) rotateZ(10deg);
+    }
+}
+
+.animate-delete {
+    animation: deleteAnimation 0.3s ease-out forwards;
+}
+
 /* 工作區樣式 */
 #workspace {
     transition: all 0.3s ease;
