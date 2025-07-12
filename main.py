@@ -3,27 +3,23 @@ import json
 import os
 import logging
 from datetime import datetime
-import google.generativeai as genai
 from typing import List, Dict, Any, Optional
 from functools import wraps
 import re
 import time
+import dotenv
 
 # 設定日誌
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # 設定 Gemini API
 api_key = os.environ.get('GEMINI_API_KEY')
 if not api_key:
     logger.warning("GEMINI_API_KEY 環境變數未設定，使用預設值")
-    api_key = 'your-gemini-api-key'
-
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel('gemini-pro')
 
 # 請求限制裝飾器
 def rate_limit(max_requests=10, window_seconds=60):
@@ -127,7 +123,7 @@ def contact_success():
 
 @app.route('/api/generate-recipe', methods=['POST'])
 def generate_recipe():
-    """生成食譜的主要 API"""
+    """生成分析的主要 API"""
     try:
         data = request.get_json()
         
@@ -144,7 +140,7 @@ def generate_recipe():
         steps_description = blocks_to_description(blocks)
         
         # 生成 AI 食譜
-        recipe = generate_ai_recipe(steps_description, style)
+        recipe = generate_ai_ans(steps_description, style)
         
         return jsonify({
             'recipe': recipe,
@@ -155,34 +151,6 @@ def generate_recipe():
     except Exception as e:
         return jsonify({
             'error': f'生成食譜時發生錯誤: {str(e)}',
-            'status': 'error'
-        }), 500
-
-
-@app.route('/api/validate-recipe', methods=['POST'])
-def validate_recipe():
-    """驗證食譜安全性和合理性"""
-    try:
-        data = request.get_json()
-        recipe_text = data.get('recipe', '')
-        
-        if not recipe_text:
-            return jsonify({
-                'error': '請提供食譜內容',
-                'status': 'error'
-            }), 400
-        
-        # 使用 AI 評估食譜
-        validation_result = validate_recipe_safety(recipe_text)
-        
-        return jsonify({
-            'validation': validation_result,
-            'status': 'success'
-        })
-        
-    except Exception as e:
-        return jsonify({
-            'error': f'驗證食譜時發生錯誤: {str(e)}',
             'status': 'error'
         }), 500
 
@@ -239,8 +207,94 @@ def blocks_to_description(blocks: List[Dict[str, Any]]) -> str:
     
     return '\n'.join(descriptions)
 
+# To run this code you need to install the following dependencies:
+# pip install google-genai
 
-def generate_ai_recipe(steps: str, style: str = '正式') -> Dict[str, Any]:
+import base64
+import os
+from google import genai
+from google.genai import types
+
+
+client = genai.Client(
+    api_key=api_key,
+)
+
+model = "gemini-2.5-flash"
+contents = [
+    types.Content(
+        role="user",
+        parts=[
+            types.Part.from_text(text="""INSERT_INPUT_HERE"""),
+        ],
+    ),
+]
+def generate():
+    generate_content_config = types.GenerateContentConfig(
+        thinking_config = types.ThinkingConfig(
+            thinking_budget=-1,
+        ),
+        response_mime_type="application/json",
+        response_schema=genai.types.Schema(
+            type = genai.types.Type.OBJECT,
+            properties = {
+                "食譜名稱": genai.types.Schema(
+                    type = genai.types.Type.STRING,
+                ),
+                "料理過後的結果": genai.types.Schema(
+                    type = genai.types.Type.STRING,
+                ),
+                "腹瀉率％": genai.types.Schema(
+                    type = genai.types.Type.NUMBER,
+                ),
+                "飽食度％": genai.types.Schema(
+                    type = genai.types.Type.NUMBER,
+                ),
+                "綜合評分（1-10）": genai.types.Schema(
+                    type = genai.types.Type.INTEGER,
+                ),
+                "可改進之處": genai.types.Schema(
+                    type = genai.types.Type.STRING,
+                ),
+                "整體總結": genai.types.Schema(
+                    type = genai.types.Type.STRING,
+                ),
+                "生成食物照片的prompt": genai.types.Schema(
+                    type = genai.types.Type.STRING,
+                ),
+                "食品安全性（1-10分）": genai.types.Schema(
+                    type = genai.types.Type.INTEGER,
+                ),
+                "各項內容整體原因分析": genai.types.Schema(
+                    type = genai.types.Type.STRING,
+                ),
+                "操作可行性（1-10分）": genai.types.Schema(
+                    type = genai.types.Type.INTEGER,
+                ),
+                "營養合理性（1-10分）": genai.types.Schema(
+                    type = genai.types.Type.INTEGER,
+                ),
+                "死亡風險評估（低/中/高）": genai.types.Schema(
+                    type = genai.types.Type.STRING,
+                    enum = ["低", "中", "高"],
+                ),
+                "腹瀉風險評估（低/中/高）": genai.types.Schema(
+                    type = genai.types.Type.STRING,
+                    enum = ["低", "中", "高"],
+                ),
+            },
+        ),
+    )
+
+    for chunk in client.models.generate_content_stream(
+        model=model,
+        contents=contents,
+        config=generate_content_config,
+    ):
+        print(chunk.text, end="")
+
+
+def generate_ai_ans(steps: str, style: str = '正式') -> Dict[str, Any]:
     """使用 AI 生成完整食譜"""
     
     style_prompts = {
@@ -269,6 +323,30 @@ def generate_ai_recipe(steps: str, style: str = '正式') -> Dict[str, Any]:
     7. 小貼士或注意事項
 
     請以 JSON 格式回覆，格式如下：
+    驗證食譜的安全性和合理性
+    
+    請評估以下食譜的安全性和合理性：
+
+    食譜內容：
+
+    請從以下角度進行評估：
+    1. 食品安全性（1-10分）
+    2. 操作可行性（1-10分）
+    3. 營養合理性（1-10分）
+    4. 死亡風險評估（低/中/高）
+    5. 腹瀉風險評估（低/中/高）
+    6. 具體建議和警告
+
+    請以 JSON 格式回覆：
+    {{
+        "safety_score": 8,
+        "feasibility_score": 7,
+        "nutrition_score": 6,
+        "death_risk": "低",
+        "diarrhea_risk": "中",
+        "warnings": ["警告1", "警告2"],
+        "suggestions": ["建議1", "建議2"]
+    }}
     {{
         "name": "食譜名稱",
         "ingredients": ["材料1", "材料2"],

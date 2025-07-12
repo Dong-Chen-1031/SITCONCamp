@@ -25,6 +25,11 @@ class RecipeGenerator {
         this.setupDragAndDrop();
         this.setupKeyboardShortcuts();
         this.setupTooltips();
+        
+        // 確保主題在初始化後立即應用
+        setTimeout(() => {
+            this.applyTheme();
+        }, 100);
     }
     
     setupEventListeners() {
@@ -66,7 +71,6 @@ class RecipeGenerator {
             this.showKeyboardShortcuts();
         });
         
-        // 主題切換
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
             themeToggle.addEventListener('click', () => {
@@ -76,33 +80,24 @@ class RecipeGenerator {
             console.warn('Theme toggle button not found');
         }
     }
-    
     setupTheme() {
         // 檢查本地存儲的主題設定
         const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
         if (savedTheme) {
             this.isDarkMode = savedTheme === 'dark';
         } else {
             // 檢查系統主題偏好
-            this.isDarkMode = prefersDark;
+            this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
         }
         
-        // 確保與 HTML 的初始狀態保持一致
-        const htmlHasDarkClass = document.documentElement.classList.contains('dark');
-        if (this.isDarkMode !== htmlHasDarkClass) {
-            this.isDarkMode = htmlHasDarkClass;
-        }
+        // 立即應用主題，不等待 DOM 載入
+        this.applyTheme();
         
-        // 等待 DOM 完全載入後再應用主題
+        // 等待 DOM 完全載入後再次應用主題（確保按鈕圖標正確）
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 this.applyTheme();
             });
-        } else {
-            // DOM 已經載入，立即應用主題
-            this.applyTheme();
         }
         
         // 監聽系統主題變化
@@ -118,33 +113,29 @@ class RecipeGenerator {
         const html = document.documentElement;
         const themeToggle = document.getElementById('theme-toggle');
         
-        // 確保元素存在
-        if (!html) {
-            console.warn('HTML element not found');
-            return;
-        }
+        console.log('Applying theme:', this.isDarkMode ? 'dark' : 'light');
         
         if (this.isDarkMode) {
             html.classList.add('dark');
             if (themeToggle) {
-                // 深色模式 - 顯示太陽圖標
-                themeToggle.innerHTML = `
-                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                `;
-                themeToggle.title = "切換至淺色模式";
-            }
-        } else {
-            html.classList.remove('dark');
-            if (themeToggle) {
-                // 淺色模式 - 顯示月亮圖標
                 themeToggle.innerHTML = `
                     <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                     </svg>
                 `;
-                themeToggle.title = "切換至深色模式";
+            } else {
+                console.warn('Theme toggle button not found in DOM');
+            }
+        } else {
+            html.classList.remove('dark');
+            if (themeToggle) {
+                themeToggle.innerHTML = `
+                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                `;
+            } else {
+                console.warn('Theme toggle button not found in DOM');
             }
         }
         
@@ -154,11 +145,6 @@ class RecipeGenerator {
         } catch (error) {
             console.warn('Failed to save theme to localStorage:', error);
         }
-        
-        // 觸發主題變更事件
-        document.dispatchEvent(new CustomEvent('themeChanged', { 
-            detail: { isDarkMode: this.isDarkMode } 
-        }));
     }
     
     toggleTheme() {
@@ -218,58 +204,29 @@ class RecipeGenerator {
         // 工具箱拖放（刪除功能）
         if (toolbox) {
             toolbox.addEventListener('dragover', (e) => {
-                console.log('Drag over toolbox:', e);
-                e.preventDefault();
-                e.dataTransfer.dropEffect = 'move';
-                toolbox.classList.add('delete-zone');
-                
-                // 添加刪除提示
-                if (!toolbox.querySelector('.delete-hint')) {
-                    const hint = document.createElement('div');
-                    hint.className = 'delete-hint absolute inset-0 flex items-center justify-center bg-red-100 dark:bg-red-900 bg-opacity-90 rounded-lg z-50';
-                    hint.innerHTML = `
-                        <div class="text-center text-red-600 dark:text-red-400">
-                            <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                        </div>
-                    `;
-                    toolbox.appendChild(hint);
+                const blockId = e.dataTransfer.getData('text/block-id');
+                if (blockId) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    toolbox.classList.add('delete-zone');
                 }
-                
             });
             
             toolbox.addEventListener('dragleave', (e) => {
                 if (!toolbox.contains(e.relatedTarget)) {
                     toolbox.classList.remove('delete-zone');
-                    const hint = toolbox.querySelector('.delete-hint');
-                    if (hint) {
-                        hint.remove();
-                    }
                 }
             });
             
             toolbox.addEventListener('drop', (e) => {
                 e.preventDefault();
                 toolbox.classList.remove('delete-zone');
-                const hint = toolbox.querySelector('.delete-hint');
-                if (hint) {
-                    hint.remove();
-                }
                 
                 // 檢查是否是從工作區拖拉過來的積木
                 const draggedBlockId = e.dataTransfer.getData('text/block-id');
                 if (draggedBlockId) {
-                    // 添加刪除動畫
-                    const blockElement = document.getElementById(draggedBlockId);
-                    if (blockElement) {
-                        blockElement.classList.add('animate-delete');
-                        setTimeout(() => {
-                            this.updateConnectors();
-                            this.removeBlock(draggedBlockId);
-                            this.showSuccess('積木已刪除！');
-                        }, 300);
-                    }
+                    this.removeBlock(draggedBlockId);
+                    this.showSuccess('積木已刪除！');
                 }
             });
         }
