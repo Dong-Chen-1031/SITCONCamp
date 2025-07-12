@@ -12,6 +12,7 @@ from functools import wraps
 import re
 from config import SYSTEM_PROMPT
 import time
+from ai import ai_ans
 import dotenv
 
 # 設定日誌
@@ -141,14 +142,9 @@ def generate_recipe():
         blocks = data['blocks']
         style = data.get('style', '正式')  # 預設正式風格
         
-        # 將積木轉換為自然語言描述
-        steps_description = blocks_to_description(blocks)
-        
-        # 生成 AI 食譜
-        recipe = generate_ai_ans(steps_description, style)
-        
+        ans = ai_ans(blocks,style)
         return jsonify({
-            'recipe': recipe,
+            'recipe': ans,
             'status': 'success',
             'generated_at': datetime.now().isoformat()
         })
@@ -188,40 +184,6 @@ def suggest_ingredients():
         }), 500
 
 
-def blocks_to_description(blocks: List[Dict[str, Any]]) -> str:
-    """將積木陣列轉換為自然語言描述"""
-    descriptions = []
-    print(blocks)
-    
-    for i, block in enumerate(blocks, 1):
-        if 'description' in block:
-            # 自由輸入積木
-            descriptions.append(f"{i}. {block['description']}")
-        if 'amount' in block:
-            # 食材積木
-            ingredient = block.get('ingredient', '')
-            amount = block.get('amount', '')
-            
-            desc = f"{i}. 使用 {ingredient}"
-            if amount:
-                desc += f" {amount}"
-            
-            descriptions.append(desc)
-        else:
-            # 結構化積木
-            action = block.get('action', '')
-            ingredient = block.get('ingredient', '')
-            time = block.get('time', '')
-            
-            desc = f"{i}. {action}"
-            if ingredient:
-                desc += f" {ingredient}"
-            if time:
-                desc += f"，{time}"
-            
-            descriptions.append(desc)
-    print('\n'.join(descriptions))
-    return '\n'.join(descriptions)
 
 def generate_ai_ans(steps: str, style: str = '正式') -> Dict[str, Any]:
     """使用 AI 生成完整食譜"""
@@ -315,57 +277,6 @@ def generate_ai_ans(steps: str, style: str = '正式') -> Dict[str, Any]:
         }
 
 
-def validate_recipe_safety(recipe_text: str) -> Dict[str, Any]:
-    """驗證食譜的安全性和合理性"""
-    
-    prompt = f"""
-    請評估以下食譜的安全性和合理性：
-
-    食譜內容：
-    {recipe_text}
-
-    請從以下角度進行評估：
-    1. 食品安全性（1-10分）
-    2. 操作可行性（1-10分）
-    3. 營養合理性（1-10分）
-    4. 死亡風險評估（低/中/高）
-    5. 腹瀉風險評估（低/中/高）
-    6. 具體建議和警告
-
-    請以 JSON 格式回覆：
-    {{
-        "safety_score": 8,
-        "feasibility_score": 7,
-        "nutrition_score": 6,
-        "death_risk": "低",
-        "diarrhea_risk": "中",
-        "warnings": ["警告1", "警告2"],
-        "suggestions": ["建議1", "建議2"]
-    }}
-    """
-    
-    try:
-        response = model.generate_content(prompt)
-        result_text = response.text
-        
-        # 清理回應
-        if '```json' in result_text:
-            result_text = result_text.split('```json')[1].split('```')[0].strip()
-        elif '```' in result_text:
-            result_text = result_text.split('```')[1].strip()
-        
-        return json.loads(result_text)
-        
-    except:
-        return {
-            'safety_score': 5,
-            'feasibility_score': 5,
-            'nutrition_score': 5,
-            'death_risk': '中',
-            'diarrhea_risk': '中',
-            'warnings': ['無法評估，請謹慎操作'],
-            'suggestions': ['建議諮詢專業人士']
-        }
 
 
 
