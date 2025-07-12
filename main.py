@@ -25,8 +25,8 @@ def about():
     return render_template('about.html')
 
 @app.route('/open')
-def about():
-    """關於頁面"""
+def open():
+    """開放頁面"""
     return render_template('open.html')
 
 
