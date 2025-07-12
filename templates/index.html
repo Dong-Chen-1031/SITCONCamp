@@ -217,10 +217,30 @@
                     <label class="block text-xs text-blue-600 dark:text-blue-400 mb-1">材料</label>
                     <input type="text" class="ingredient-input w-full px-2 py-1 bg-white dark:bg-gray-700 border border-blue-300 dark:border-blue-600 rounded text-sm" placeholder="例如：蛋糕糊">
                 </div>
-                <div>
-                    <label class="block text-xs text-blue-600 dark:text-blue-400 mb-1">時間/方式</label>
+                <!-- <div>
+                    <label class="block text-xs text-blue-600 dark:text-blue-400 mb-1">時間</label>
                     <input type="text" class="time-input w-full px-2 py-1 bg-white dark:bg-gray-700 border border-blue-300 dark:border-blue-600 rounded text-sm" placeholder="例如：10（分鐘）">
-                </div>
+                </div> -->
+
+
+<div>
+  <label class="block text-xs text-blue-600 dark:text-blue-400 mb-1">時間</label>
+  <div class="flex items-center space-x-4">
+    <input
+      type="text"
+      class="time-input max-w-[80px] px-2 py-1 bg-white dark:bg-gray-700 border border-blue-300 dark:border-blue-600 rounded text-sm"
+      placeholder="10（分）"
+    />
+    <div class="flex space-x-4">
+      <button type="button" class="time-btn" data-value="5">5分</button>
+      <button type="button" class="time-btn" data-value="30">30分</button>
+      <button type="button" class="time-btn" data-value="720">12小時</button>
+      <button type="button" class="time-btn" data-value="525600">1年</button>
+    </div>
+  </div>
+</div>
+
+
             </div>
         </div>
     </div>

@@ -4,10 +4,10 @@ class RecipeGenerator {
         this.blocks = [];
         this.blockIdCounter = 0;
         this.isDarkMode = false;
-        
+
         this.init();
     }
-    
+
     init() {
         // 確保在 DOM 完全載入後執行
         if (document.readyState === 'loading') {
@@ -18,20 +18,20 @@ class RecipeGenerator {
             this.initializeComponents();
         }
     }
-    
+
     initializeComponents() {
         this.setupEventListeners();
         this.setupTheme();
         this.setupDragAndDrop();
         this.setupKeyboardShortcuts();
         this.setupTooltips();
-        
+
         // 確保主題在初始化後立即應用
         setTimeout(() => {
             this.applyTheme();
         }, 100);
     }
-    
+
     setupEventListeners() {
         // 積木模板點擊事件
         document.querySelectorAll('.block-template').forEach(template => {
@@ -40,37 +40,37 @@ class RecipeGenerator {
                 this.addBlock(blockType);
             });
         });
-        
-        // 生成評估按鈕
+
+        // 生成食譜按鈕
         document.getElementById('generate-recipe').addEventListener('click', () => {
             this.generateRecipe();
         });
-        
+
         // 清空工作區
         document.getElementById('clear-workspace').addEventListener('click', () => {
             this.clearWorkspace();
         });
-        
-        // 保存評估
+
+        // 保存食譜
         document.getElementById('save-recipe').addEventListener('click', () => {
             this.saveRecipe();
         });
-        
+
         // 材料助手
         document.getElementById('ingredient-helper').addEventListener('click', () => {
             this.showIngredientHelper();
         });
-        
+
         // 積木預覽
         document.getElementById('preview-blocks').addEventListener('click', () => {
             this.showBlockPreview();
         });
-        
+
         // 快捷鍵幫助
         document.getElementById('shortcuts-help').addEventListener('click', () => {
             this.showKeyboardShortcuts();
         });
-        
+
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
             themeToggle.addEventListener('click', () => {
@@ -89,17 +89,17 @@ class RecipeGenerator {
             // 檢查系統主題偏好
             this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
         }
-        
+
         // 立即應用主題，不等待 DOM 載入
         this.applyTheme();
-        
+
         // 等待 DOM 完全載入後再次應用主題（確保按鈕圖標正確）
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 this.applyTheme();
             });
         }
-        
+
         // 監聽系統主題變化
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
             if (!localStorage.getItem('theme')) {
@@ -108,13 +108,13 @@ class RecipeGenerator {
             }
         });
     }
-    
+
     applyTheme() {
         const html = document.documentElement;
         const themeToggle = document.getElementById('theme-toggle');
-        
+
         console.log('Applying theme:', this.isDarkMode ? 'dark' : 'light');
-        
+
         if (this.isDarkMode) {
             html.classList.add('dark');
             if (themeToggle) {
@@ -138,7 +138,7 @@ class RecipeGenerator {
                 console.warn('Theme toggle button not found in DOM');
             }
         }
-        
+
         // 保存主題設定
         try {
             localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
@@ -146,61 +146,61 @@ class RecipeGenerator {
             console.warn('Failed to save theme to localStorage:', error);
         }
     }
-    
+
     toggleTheme() {
         this.isDarkMode = !this.isDarkMode;
         console.log('Theme toggled to:', this.isDarkMode ? 'dark' : 'light');
         this.applyTheme();
     }
-    
+
     setupDragAndDrop() {
         // 增強的拖放系統
         const workspace = document.getElementById('workspace');
         const blocksContainer = document.getElementById('blocks-container');
         const toolbox = document.querySelector('.lg\\:col-span-1'); // 工具箱區域
-        
+
         // 積木模板拖拉
         document.querySelectorAll('.block-template').forEach(template => {
             template.draggable = true;
-            
+
             template.addEventListener('dragstart', (e) => {
                 const blockType = e.currentTarget.dataset.blockType;
                 e.dataTransfer.setData('text/plain', blockType);
                 e.dataTransfer.effectAllowed = 'copy';
                 template.classList.add('dragging');
             });
-            
+
             template.addEventListener('dragend', (e) => {
                 template.classList.remove('dragging');
             });
         });
-        
+
         // 工作區拖放
         workspace.addEventListener('dragover', (e) => {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'copy';
             workspace.classList.add('drag-over');
         });
-        
+
         workspace.addEventListener('dragleave', (e) => {
             if (!workspace.contains(e.relatedTarget)) {
                 workspace.classList.remove('drag-over');
             }
         });
-        
+
         workspace.addEventListener('drop', (e) => {
             e.preventDefault();
             workspace.classList.remove('drag-over');
-            
+
             const blockType = e.dataTransfer.getData('text/plain');
             const blockId = e.dataTransfer.getData('text/block-id');
-            
+
             if (blockType && !blockId) {
                 // 從工具箱拖拉新積木
                 this.addBlock(blockType);
             }
         });
-        
+
         // 工具箱拖放（刪除功能）
         if (toolbox) {
             toolbox.addEventListener('dragover', (e) => {
@@ -208,17 +208,17 @@ class RecipeGenerator {
                 e.dataTransfer.dropEffect = 'move';
                 toolbox.classList.add('delete-zone');
             });
-            
+
             toolbox.addEventListener('dragleave', (e) => {
                 if (!toolbox.contains(e.relatedTarget)) {
                     toolbox.classList.remove('delete-zone');
                 }
             });
-            
+
             toolbox.addEventListener('drop', (e) => {
                 e.preventDefault();
                 toolbox.classList.remove('delete-zone');
-                
+
                 // 檢查是否是從工作區拖拉過來的積木
                 const draggedBlockId = e.dataTransfer.getData('text/block-id');
                 if (draggedBlockId) {
@@ -227,20 +227,20 @@ class RecipeGenerator {
                 }
             });
         }
-        
+
         // 使積木容器支持排序
         this.setupSortable();
     }
-    
+
     setupSortable() {
         const blocksContainer = document.getElementById('blocks-container');
         let draggedElement = null;
         let draggedBlockId = null;
-        
+
         // 為每個積木添加拖拉事件
         const addDragEvents = (element) => {
             element.draggable = true;
-            
+
             element.addEventListener('dragstart', (e) => {
                 draggedElement = element;
                 draggedBlockId = element.id;
@@ -250,22 +250,22 @@ class RecipeGenerator {
                 // 設置積木ID，用於拖拉到工具箱刪除
                 e.dataTransfer.setData('text/block-id', element.id);
             });
-            
+
             element.addEventListener('dragend', (e) => {
                 element.classList.remove('dragging');
                 draggedElement = null;
                 draggedBlockId = null;
-                
+
                 // 拖拉結束後更新順序
                 this.updateBlockOrder();
             });
         };
-        
+
         // 容器拖放事件
         blocksContainer.addEventListener('dragover', (e) => {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
-            
+
             if (draggedElement) {
                 const afterElement = this.getDragAfterElement(blocksContainer, e.clientY);
                 if (afterElement == null) {
@@ -275,13 +275,13 @@ class RecipeGenerator {
                 }
             }
         });
-        
+
         blocksContainer.addEventListener('drop', (e) => {
             e.preventDefault();
             // 拖放完成後更新順序
             this.updateBlockOrder();
         });
-        
+
         // 使用 MutationObserver 監聽新增的積木
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
@@ -294,42 +294,42 @@ class RecipeGenerator {
                 }
             });
         });
-        
+
         observer.observe(blocksContainer, { childList: true });
     }
-    
+
     updateBlockOrder() {
         // 重新排列內部數據以匹配 DOM 順序
         const blockElements = document.querySelectorAll('.block-item');
         const newBlocksOrder = [];
-        
+
         blockElements.forEach((element, index) => {
             const blockId = element.id;
             const blockData = this.blocks.find(block => block.id === blockId);
-            
+
             if (blockData) {
                 newBlocksOrder.push(blockData);
             }
         });
-        
+
         // 更新內部數據順序
         this.blocks = newBlocksOrder;
-        
+
         // 更新步驟編號和連接線
         this.updateStepNumbers();
         this.updateConnectors();
     }
-    
+
     updateConnectors() {
         const blockElements = document.querySelectorAll('.block-item');
-        
+
         blockElements.forEach((element, index) => {
             // 移除現有的連接線
             const existingConnector = element.querySelector('.block-connector');
             if (existingConnector) {
                 existingConnector.remove();
             }
-            
+
             // 為非第一個積木添加連接線
             if (index > 0) {
                 const connector = document.createElement('div');
@@ -338,14 +338,14 @@ class RecipeGenerator {
             }
         });
     }
-    
+
     getDragAfterElement(container, y) {
         const draggableElements = [...container.querySelectorAll('.block-item:not(.dragging)')];
-        
+
         return draggableElements.reduce((closest, child) => {
             const box = child.getBoundingClientRect();
             const offset = y - box.top - box.height / 2;
-            
+
             if (offset < 0 && offset > closest.offset) {
                 return { offset: offset, element: child };
             } else {
@@ -353,44 +353,44 @@ class RecipeGenerator {
             }
         }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
-    
+
     addBlock(blockType) {
         const blockId = `block_${this.blockIdCounter++}`;
         const container = document.getElementById('blocks-container');
-        
+
         // 克隆模板
         const template = document.querySelector(`#block-templates .${blockType}-block`);
         const blockElement = template.cloneNode(true);
-        
+
         // 設置 ID 和事件
         blockElement.id = blockId;
         blockElement.classList.add('block-item');
-        
+
         // 添加步驟編號
         const stepNumber = document.createElement('div');
         stepNumber.className = 'step-number absolute -left-8 top-4 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold';
         stepNumber.textContent = this.blocks.length + 1;
         blockElement.style.position = 'relative';
         blockElement.appendChild(stepNumber);
-        
+
         // 添加連接線（除了第一個積木）
         if (this.blocks.length > 0) {
             const connector = document.createElement('div');
             connector.className = 'block-connector absolute -top-4 left-2 w-0.5 h-8 bg-blue-400';
             blockElement.appendChild(connector);
         }
-        
+
         // 添加刪除事件
         const removeBtn = blockElement.querySelector('.remove-block');
         removeBtn.addEventListener('click', () => {
             this.removeBlock(blockId);
-        //TODO:
+            //TODO:
             this.showSuccess('積木已刪除！');
         });
-        
+
         // 添加觸控長按刪除（行動裝置友好）
         let touchTimer = null;
-        
+
         blockElement.addEventListener('touchstart', (e) => {
             touchTimer = setTimeout(() => {
                 if (confirm('確定要刪除這個積木嗎？')) {
@@ -398,42 +398,44 @@ class RecipeGenerator {
                 }
             }, 1000); // 長按 1 秒
         });
-        
+
         blockElement.addEventListener('touchend', (e) => {
             if (touchTimer) {
                 clearTimeout(touchTimer);
                 touchTimer = null;
             }
         });
-        
+
         blockElement.addEventListener('touchmove', (e) => {
             if (touchTimer) {
                 clearTimeout(touchTimer);
                 touchTimer = null;
             }
         });
-        
+
+
+
         // 添加輸入事件監聽
         const inputs = blockElement.querySelectorAll('input, textarea');
         inputs.forEach(input => {
             input.addEventListener('input', () => {
                 this.updateBlockData(blockId);
             });
-            
+
             // 添加 focus 高亮效果
             input.addEventListener('focus', () => {
                 blockElement.classList.add('focused');
             });
-            
+
             input.addEventListener('blur', () => {
                 blockElement.classList.remove('focused');
             });
         });
-        
+
         // 添加折疊/展開功能
         const header = blockElement.querySelector('.flex.items-center.justify-between');
         const content = blockElement.querySelector('.space-y-2');
-        
+
         if (header && content) {
             const toggleBtn = document.createElement('button');
             toggleBtn.className = 'collapse-toggle text-gray-400 hover:text-gray-600 ml-2';
@@ -441,23 +443,23 @@ class RecipeGenerator {
             toggleBtn.addEventListener('click', () => {
                 this.toggleBlock(blockId);
             });
-            
+
             header.insertBefore(toggleBtn, header.lastChild);
         }
-        
+
         // 添加到工作區
         container.appendChild(blockElement);
-        
+
         // 添加動畫效果
         blockElement.style.opacity = '0';
         blockElement.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
             blockElement.style.transition = 'all 0.3s ease';
             blockElement.style.opacity = '1';
             blockElement.style.transform = 'translateY(0)';
         }, 10);
-        
+
         // 更新內部數據
         this.blocks.push({
             id: blockId,
@@ -465,27 +467,27 @@ class RecipeGenerator {
             data: {},
             collapsed: false
         });
-        
+
         // 隱藏空狀態
         this.toggleEmptyState();
-        
+
         // 更新所有步驟編號和連接線
         this.updateStepNumbers();
         this.updateConnectors();
-        
+
         // 自動聚焦到第一個輸入框
         const firstInput = blockElement.querySelector('input, textarea');
         if (firstInput) {
             setTimeout(() => firstInput.focus(), 350);
         }
     }
-    
+
     toggleBlock(blockId) {
         const blockElement = document.getElementById(blockId);
         const blockData = this.blocks.find(block => block.id === blockId);
         const content = blockElement.querySelector('.space-y-2');
         const toggleBtn = blockElement.querySelector('.collapse-toggle');
-        
+
         if (blockData.collapsed) {
             // 展開
             content.style.display = 'block';
@@ -498,7 +500,7 @@ class RecipeGenerator {
             blockData.collapsed = true;
         }
     }
-    
+
     updateStepNumbers() {
         const blockElements = document.querySelectorAll('.block-item');
         blockElements.forEach((element, index) => {
@@ -508,14 +510,14 @@ class RecipeGenerator {
             }
         });
     }
-    
+
     removeBlock(blockId) {
         const blockElement = document.getElementById(blockId);
         if (blockElement) {
             blockElement.style.transition = 'all 0.3s ease';
             blockElement.style.opacity = '0';
             blockElement.style.transform = 'translateY(-20px)';
-            
+
             setTimeout(() => {
                 blockElement.remove();
                 this.blocks = this.blocks.filter(block => block.id !== blockId);
@@ -527,11 +529,11 @@ class RecipeGenerator {
             }, 300);
         }
     }
-    
+
     updateBlockData(blockId) {
         const blockElement = document.getElementById(blockId);
         const blockData = this.blocks.find(block => block.id === blockId);
-        
+
         if (blockElement && blockData) {
             switch (blockData.type) {
                 case 'structured':
@@ -555,12 +557,12 @@ class RecipeGenerator {
             }
         }
     }
-    
+
     toggleEmptyState() {
         const workspace = document.getElementById('workspace');
         const emptyState = workspace.querySelector('.absolute.inset-0');
         const body = document.body;
-        
+
         if (this.blocks.length > 0) {
             emptyState.style.display = 'none';
             body.classList.add('has-blocks');
@@ -569,32 +571,32 @@ class RecipeGenerator {
             body.classList.remove('has-blocks');
         }
     }
-    
+
     clearWorkspace(confirm = true) {
         if (this.blocks.length === 0) return;
-        
+
         if (confirm && !window.confirm('確定要清空所有積木嗎？')) {
             return;
         }
-        
+
         const container = document.getElementById('blocks-container');
         container.innerHTML = '';
         this.blocks = [];
         this.toggleEmptyState();
         this.hideRecipeResult();
     }
-    
+
     async generateRecipe() {
         if (this.blocks.length === 0) {
             this.showError('請先添加一些積木來描述你的創意料理！');
             return;
         }
-        
+
         // 更新所有積木數據
         this.blocks.forEach(block => {
             this.updateBlockData(block.id);
         });
-        
+
         // 檢查是否有空的積木
         const hasEmptyBlocks = this.blocks.some(block => {
             const data = block.data;
@@ -609,15 +611,15 @@ class RecipeGenerator {
                     return false;
             }
         });
-        
+
         // if (hasEmptyBlocks) {
         //     this.showError('請填寫所有積木的必要欄位！');
         //     return;
         // }
-        
+
         // 顯示載入狀態
         this.showLoading();
-        
+
         try {
             // 準備 API 請求數據
             const requestData = {
@@ -630,7 +632,7 @@ class RecipeGenerator {
                 }),
                 style: document.getElementById('recipe-style').value
             };
-            
+
             // 發送 API 請求
             const response = await fetch('/api/generate-recipe', {
                 method: 'POST',
@@ -639,20 +641,19 @@ class RecipeGenerator {
                 },
                 body: JSON.stringify(requestData)
             });
-            
+
             const result = await response.json();
-            
+
             if (result.status === 'success') {
                 this.displayRecipe(result.recipe);
-                this.showSuccess('評估生成成功！');
-                // 自動生成食物圖片
-                if (result.recipe.food_photo_prompt) {
-                    this.generateFoodImage(result.recipe.food_photo_prompt);
-                }
+                this.showSuccess('食譜生成成功！');
+
+                // 立即生成食物圖片
+                this.generateFoodImage(result.recipe.food_photo_prompt);
             } else {
-                this.showError(result.error || '生成評估時發生錯誤');
+                this.showError(result.error || '生成食譜時發生錯誤');
             }
-            
+
         } catch (error) {
             this.showError('網路連接錯誤，請檢查您的網路連接');
             console.error('Recipe generation error:', error);
@@ -660,11 +661,11 @@ class RecipeGenerator {
             this.hideLoading();
         }
     }
-    
+
     displayRecipe(recipe) {
         const resultSection = document.getElementById('recipe-result');
         const contentDiv = document.getElementById('recipe-content');
-        
+
         contentDiv.innerHTML = `
             <div class="space-y-6">
                 <!-- Recipe Header -->
@@ -753,11 +754,10 @@ class RecipeGenerator {
                             </svg>
                             死亡風險
                         </h4>
-                        <span class="px-3 py-1 rounded-full text-sm font-medium ${
-                            recipe.death_risk === 'Low' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
-                            recipe.death_risk === 'Medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
-                            'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
-                        }">
+                        <span class="px-3 py-1 rounded-full text-sm font-medium ${recipe.death_risk === 'Low' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
+                recipe.death_risk === 'Medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
+                    'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+            }">
                             ${recipe.death_risk}
                         </span>
                     </div>
@@ -768,11 +768,10 @@ class RecipeGenerator {
                             </svg>
                             腹瀉風險
                         </h4>
-                        <span class="px-3 py-1 rounded-full text-sm font-medium ${
-                            recipe.diarrhea_risk === 'Low' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
-                            recipe.diarrhea_risk === 'Medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
-                            'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
-                        }">
+                        <span class="px-3 py-1 rounded-full text-sm font-medium ${recipe.diarrhea_risk === 'Low' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
+                recipe.diarrhea_risk === 'Medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
+                    'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+            }">
                             ${recipe.diarrhea_risk}
                         </span>
                     </div>
@@ -831,20 +830,97 @@ class RecipeGenerator {
                 </div>
             </div>
         `;
-        
+
         resultSection.classList.remove('hidden');
         resultSection.scrollIntoView({ behavior: 'smooth' });
     }
-    
+
+    async generateFoodImage(prompt) {
+        const imageContainer = document.getElementById('food-image-container');
+
+        if (!imageContainer) {
+            console.warn('食物圖片容器未找到');
+            return;
+        }
+
+        const placeholder = imageContainer.querySelector('.w-full.h-64');
+
+        if (!placeholder) {
+            console.warn('圖片佔位元素未找到');
+            return;
+        }
+
+        // 顯示載入狀態
+        placeholder.innerHTML = `
+            <div class="text-gray-500 dark:text-gray-400">
+                <div class="loading-spinner mx-auto mb-2"></div>
+                <p class="text-sm">正在生成食物照片...</p>
+                <p class="text-xs text-gray-400 mt-1">提示詞: "${prompt}"</p>
+            </div>
+        `;
+
+        try {
+            // 調用後端圖片生成 API
+            const response = await fetch('/api/generate-img', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt: prompt })
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                // 顯示生成的圖片
+                placeholder.innerHTML = `
+                    <img src="data:image/jpeg;base64,${result.image}" 
+                         alt="AI 生成的食物照片" 
+                         class="w-full h-64 object-cover rounded-lg shadow-lg">
+                `;
+
+                this.showSuccess('食物照片生成成功！');
+            } else {
+                // 顯示錯誤狀態
+                placeholder.innerHTML = `
+                    <div class="text-red-500 dark:text-red-400">
+                        <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <p class="text-sm">圖片生成失敗</p>
+                        <p class="text-xs text-gray-400 mt-1">${result.error || '未知錯誤'}</p>
+                    </div>
+                `;
+
+                this.showError('圖片生成失敗：' + (result.error || '未知錯誤'));
+            }
+
+        } catch (error) {
+            // 顯示網路錯誤
+            placeholder.innerHTML = `
+                <div class="text-red-500 dark:text-red-400">
+                    <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8V4m0 8v8m-4-4l8-8m0 8l-8-8"></path>
+                    </svg>
+                    <p class="text-sm">網路連接錯誤</p>
+                    <p class="text-xs text-gray-400 mt-1">請檢查您的網路連接</p>
+                </div>
+            `;
+
+            this.showError('圖片生成失敗：網路連接錯誤');
+            console.error('Image generation error:', error);
+        }
+    }
+
     hideRecipeResult() {
         document.getElementById('recipe-result').classList.add('hidden');
     }
-    
+
     async validateRecipe() {
         const recipeContent = document.getElementById('recipe-content').textContent;
-        
+
         this.showLoading();
-        
+
         try {
             const response = await fetch('/api/validate-recipe', {
                 method: 'POST',
@@ -853,15 +929,15 @@ class RecipeGenerator {
                 },
                 body: JSON.stringify({ recipe: recipeContent })
             });
-            
+
             const result = await response.json();
-            
+
             if (result.status === 'success') {
                 this.displayValidation(result.validation);
             } else {
                 this.showError(result.error || '驗證食譜時發生錯誤');
             }
-            
+
         } catch (error) {
             this.showError('網路連接錯誤');
             console.error('Recipe validation error:', error);
@@ -869,7 +945,7 @@ class RecipeGenerator {
             this.hideLoading();
         }
     }
-    
+
     displayValidation(validation) {
         const modal = document.createElement('div');
         modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
@@ -923,9 +999,9 @@ class RecipeGenerator {
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
-        
+
         // 點擊外部關閉
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -933,7 +1009,7 @@ class RecipeGenerator {
             }
         });
     }
-    
+
     saveRecipe() {
         const blocks = this.blocks;
         const recipeData = {
@@ -941,24 +1017,24 @@ class RecipeGenerator {
             timestamp: new Date().toISOString(),
             version: '1.0'
         };
-        
+
         const dataStr = JSON.stringify(recipeData, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);
-        
+
         const link = document.createElement('a');
         link.href = url;
         link.download = `recipe-blocks-${new Date().toISOString().split('T')[0]}.json`;
         link.click();
-        
+
         URL.revokeObjectURL(url);
         this.showSuccess('積木配置已保存！');
     }
-    
+
     shareRecipe() {
         const recipeTitle = document.querySelector('#recipe-content h2')?.textContent || 'AI 生成的創意料理評估';
         const url = window.location.href;
-        
+
         if (navigator.share) {
             navigator.share({
                 title: recipeTitle,
@@ -972,11 +1048,11 @@ class RecipeGenerator {
             });
         }
     }
-    
+
     downloadRecipe() {
         const recipeContent = document.getElementById('recipe-content').innerHTML;
         const title = document.querySelector('#recipe-content h2')?.textContent || 'AI 料理評估';
-        
+
         const htmlContent = `
             <!DOCTYPE html>
             <html>
@@ -992,55 +1068,55 @@ class RecipeGenerator {
             </body>
             </html>
         `;
-        
+
         const blob = new Blob([htmlContent], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
-        
+
         const link = document.createElement('a');
         link.href = url;
         link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.html`;
         link.click();
-        
+
         URL.revokeObjectURL(url);
         this.showSuccess('評估報告已下載！');
     }
-    
+
     showLoading() {
         document.getElementById('loading-overlay').classList.remove('hidden');
     }
-    
+
     hideLoading() {
         document.getElementById('loading-overlay').classList.add('hidden');
     }
-    
+
     showSuccess(message) {
         this.showMessage(message, 'success');
     }
-    
+
     showError(message) {
         this.showMessage(message, 'error');
     }
-    
+
     showMessage(message, type = 'info') {
         const toast = document.createElement('div');
         toast.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
-        
+
         const colors = {
             success: 'bg-green-500 text-white',
             error: 'bg-red-500 text-white',
             info: 'bg-blue-500 text-white'
         };
-        
+
         toast.className += ` ${colors[type]}`;
         toast.textContent = message;
-        
+
         document.body.appendChild(toast);
-        
+
         // 顯示動畫
         setTimeout(() => {
             toast.classList.remove('translate-x-full');
         }, 10);
-        
+
         // 自動隱藏
         setTimeout(() => {
             toast.classList.add('translate-x-full');
@@ -1049,7 +1125,7 @@ class RecipeGenerator {
             }, 300);
         }, 3000);
     }
-    
+
     showIngredientHelper() {
         const modal = document.createElement('div');
         modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
@@ -1081,39 +1157,39 @@ class RecipeGenerator {
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
-        
+
         // 點擊外部關閉
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.remove();
             }
         });
-        
+
         // 聚焦到輸入框
         setTimeout(() => {
             document.getElementById('available-ingredients').focus();
         }, 100);
     }
-    
+
     async getIngredientSuggestions() {
         const ingredientsText = document.getElementById('available-ingredients').value.trim();
-        
+
         if (!ingredientsText) {
             this.showError('請輸入一些材料！');
             return;
         }
-        
+
         const ingredients = ingredientsText.split(',').map(item => item.trim()).filter(item => item);
-        
+
         if (ingredients.length === 0) {
             this.showError('請輸入有效的材料！');
             return;
         }
-        
+
         this.showLoading();
-        
+
         try {
             const response = await fetch('/api/suggest-ingredients', {
                 method: 'POST',
@@ -1122,9 +1198,9 @@ class RecipeGenerator {
                 },
                 body: JSON.stringify({ ingredients })
             });
-            
+
             const result = await response.json();
-            
+
             if (result.status === 'success') {
                 this.displayIngredientSuggestions(result.suggestions);
                 // 關閉材料輸入彈窗
@@ -1132,7 +1208,7 @@ class RecipeGenerator {
             } else {
                 this.showError(result.error || '獲取建議時發生錯誤');
             }
-            
+
         } catch (error) {
             this.showError('網路連接錯誤');
             console.error('Ingredient suggestions error:', error);
@@ -1140,7 +1216,7 @@ class RecipeGenerator {
             this.hideLoading();
         }
     }
-    
+
     displayIngredientSuggestions(suggestions) {
         const modal = document.createElement('div');
         modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
@@ -1183,12 +1259,12 @@ class RecipeGenerator {
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
-        
+
         // 存儲建議以供使用
         this.currentSuggestions = suggestions;
-        
+
         // 點擊外部關閉
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -1196,15 +1272,15 @@ class RecipeGenerator {
             }
         });
     }
-    
+
     useIngredientSuggestion(index) {
         const suggestion = this.currentSuggestions[index];
-        
+
         if (!suggestion) return;
-        
+
         // 清空現有積木
         this.clearWorkspace(false);
-        
+
         // 根據建議創建積木
         suggestion.steps.forEach(step => {
             setTimeout(() => {
@@ -1220,57 +1296,57 @@ class RecipeGenerator {
                 }, 100);
             }, 50);
         });
-        
+
         // 關閉彈窗
         document.querySelector('.fixed.inset-0').remove();
-        
+
         this.showSuccess(`已載入「${suggestion.name}」的建議步驟！`);
     }
-    
+
     setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + Enter: 生成評估
+            // Ctrl/Cmd + Enter: 生成食譜
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
                 this.generateRecipe();
             }
-            
+
             // Ctrl/Cmd + D: 添加自由積木
             if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
                 e.preventDefault();
                 this.addBlock('freeform');
             }
-            
+
             // Ctrl/Cmd + A: 添加動作積木
             if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
                 e.preventDefault();
                 this.addBlock('structured');
             }
-            
+
             // Ctrl/Cmd + I: 添加材料積木
             if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
                 e.preventDefault();
                 this.addBlock('ingredient');
             }
-            
+
             // Ctrl/Cmd + K: 清空工作區
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
                 this.clearWorkspace();
             }
-            
+
             // Ctrl/Cmd + H: 材料助手
             if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
                 e.preventDefault();
                 this.showIngredientHelper();
             }
-            
+
             // Escape: 關閉彈窗
             if (e.key === 'Escape') {
                 const modals = document.querySelectorAll('.fixed.inset-0');
                 modals.forEach(modal => modal.remove());
             }
-            
+
             // ? 或 /: 顯示快捷鍵幫助
             if (e.key === '?' || e.key === '/') {
                 e.preventDefault();
@@ -1278,17 +1354,17 @@ class RecipeGenerator {
             }
         });
     }
-    
+
     setupTooltips() {
         // 為按鈕添加工具提示
         const tooltips = {
-            'generate-recipe': '生成評估 (Ctrl+Enter)',
+            'generate-recipe': '生成食譜 (Ctrl+Enter)',
             'clear-workspace': '清空工作區 (Ctrl+K)',
-            'save-recipe': '保存評估配置',
+            'save-recipe': '保存食譜配置',
             'ingredient-helper': '材料助手 (Ctrl+H)',
             'theme-toggle': '切換深/淺色主題'
         };
-        
+
         Object.entries(tooltips).forEach(([id, text]) => {
             const element = document.getElementById(id);
             if (element) {
@@ -1296,12 +1372,12 @@ class RecipeGenerator {
                 element.setAttribute('data-tooltip', text);
             }
         });
-        
+
         // 為積木模板添加工具提示
         document.querySelectorAll('.block-template').forEach(template => {
             const blockType = template.dataset.blockType;
             let tooltip = '';
-            
+
             switch (blockType) {
                 case 'structured':
                     tooltip = '動作積木：結構化的動作+材料+時間 (Ctrl+A)';
@@ -1313,18 +1389,18 @@ class RecipeGenerator {
                     tooltip = '自由積木：完全自由的描述 (Ctrl+D)';
                     break;
             }
-            
+
             template.title = tooltip;
             template.setAttribute('data-tooltip', tooltip);
         });
     }
-    
+
     showBlockPreview() {
         if (this.blocks.length === 0) {
             this.showError('沒有積木可以預覽！');
             return;
         }
-        
+
         const modal = document.createElement('div');
         modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
         modal.innerHTML = `
@@ -1333,26 +1409,26 @@ class RecipeGenerator {
                 
                 <div class="space-y-3">
                     ${this.blocks.map((block, index) => {
-                        this.updateBlockData(block.id);
-                        const data = block.data;
-                        
-                        let content = '';
-                        switch (block.type) {
-                            case 'structured':
-                                content = `<span class="text-blue-600 dark:text-blue-400">${data.action || '（未填寫動作）'}</span> 
+            this.updateBlockData(block.id);
+            const data = block.data;
+
+            let content = '';
+            switch (block.type) {
+                case 'structured':
+                    content = `<span class="text-blue-600 dark:text-blue-400">${data.action || '（未填寫動作）'}</span> 
                                           <span class="text-green-600 dark:text-green-400">${data.ingredient || '（未填寫材料）'}</span>
                                           ${data.time ? `<span class="text-purple-600 dark:text-purple-400">${data.time}</span>` : ''}`;
-                                break;
-                            case 'ingredient':
-                                content = `<span class="text-green-600 dark:text-green-400">${data.ingredient || '（未填寫材料）'}</span>
+                    break;
+                case 'ingredient':
+                    content = `<span class="text-green-600 dark:text-green-400">${data.ingredient || '（未填寫材料）'}</span>
                                           ${data.amount ? `<span class="text-gray-600 dark:text-gray-400">${data.amount}</span>` : ''}`;
-                                break;
-                            case 'freeform':
-                                content = `<span class="text-purple-600 dark:text-purple-400">${data.description || '（未填寫描述）'}</span>`;
-                                break;
-                        }
-                        
-                        return `
+                    break;
+                case 'freeform':
+                    content = `<span class="text-purple-600 dark:text-purple-400">${data.description || '（未填寫描述）'}</span>`;
+                    break;
+            }
+
+            return `
                             <div class="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                 <div class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0">
                                     ${index + 1}
@@ -1362,7 +1438,7 @@ class RecipeGenerator {
                                 </div>
                             </div>
                         `;
-                    }).join('')}
+        }).join('')}
                 </div>
                 
                 <div class="mt-6 flex justify-center space-x-4">
@@ -1377,9 +1453,9 @@ class RecipeGenerator {
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
-        
+
         // 點擊外部關閉
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -1387,7 +1463,7 @@ class RecipeGenerator {
             }
         });
     }
-    
+
     showKeyboardShortcuts() {
         const modal = document.createElement('div');
         modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
@@ -1440,9 +1516,9 @@ class RecipeGenerator {
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
-        
+
         // 點擊外部關閉
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -1450,11 +1526,22 @@ class RecipeGenerator {
             }
         });
     }
-    
+
     async generateFoodImage(prompt) {
         const imageContainer = document.getElementById('food-image-container');
+
+        if (!imageContainer) {
+            console.warn('食物圖片容器未找到');
+            return;
+        }
+
         const placeholder = imageContainer.querySelector('.w-full.h-64');
-        
+
+        if (!placeholder) {
+            console.warn('圖片佔位元素未找到');
+            return;
+        }
+
         // 顯示載入狀態
         placeholder.innerHTML = `
             <div class="text-gray-500 dark:text-gray-400">
@@ -1463,67 +1550,40 @@ class RecipeGenerator {
                 <p class="text-xs text-gray-400 mt-1">提示詞: "${prompt}"</p>
             </div>
         `;
-        
+
         try {
+            // 調用後端圖片生成 API
             const response = await fetch('/api/generate-img', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ prompt: prompt })
-            });
-            
-            const result = await response.json();
-            
-            if (result.status === 'success' && result.image) {
-                // 顯示生成的圖片
-                placeholder.innerHTML = `
-                    <img src="data:image/jpeg;base64,${result.image}" 
-                         alt="AI 生成的食物照片" 
-                         class="w-full h-64 object-cover rounded-lg shadow-md">
-                `;
-                this.showSuccess('食物照片生成成功！');
-            } else {
-                // 顯示錯誤狀態
-                placeholder.innerHTML = `
-                    <div class="text-red-500 dark:text-red-400">
-                        <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <p class="text-sm">圖片生成失敗</p>
-                        <p class="text-xs text-gray-400 mt-1">提示詞: "${prompt}"</p>
-                        <button onclick="recipeGenerator.generateFoodImage('${prompt}')" 
-                                class="mt-2 px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm transition-colors">
-                            重新生成
-                        </button>
-                    </div>
-                `;
-                this.showError(result.error || '生成圖片時發生錯誤');
-            }
-            
-        } catch (error) {
-            // 顯示網路錯誤
-            placeholder.innerHTML = `
-                <div class="text-red-500 dark:text-red-400">
-                    <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <p class="text-sm">網路連接錯誤</p>
-                    <p class="text-xs text-gray-400 mt-1">提示詞: "${prompt}"</p>
-                    <button onclick="recipeGenerator.generateFoodImage('${prompt}')" 
-                            class="mt-2 px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm transition-colors">
-                        重新生成
-                    </button>
-                </div>
-            `;
-            this.showError('網路連接錯誤，請檢查您的網路連接');
-            console.error('Image generation error:', error);
-        }
-    }
-}
+            });. /* 基本按鈕樣式 + 過渡效果 */
 
+            const result = await response.json(); @apply px - 2 py - 1 rounded text - xs transition transform duration - 150 ease - out;
+            kground - color: theme('colors.blue.100');
+            if (result.status === 'success') {
+                // 顯示生成的圖片  }
+                placeholder.innerHTML = `  .time-btn:active {
+                    window.recipeGenerator = recipeGenerator;// 全局函數const recipeGenerator = new RecipeGenerator();// 初始化}    }        }            console.error('Image generation error:', error);            this.showError('圖片生成失敗：網路連接錯誤');                        `;                </div >                    <p class="text-xs text-gray-400 mt-1">請檢查您的網路連接</p>                    <p class="text-sm">網路連接錯誤</p>                    </svg >                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8V4m0 8v8m-4-4l8-8m0 8l-8-8"></path>                    <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">                <div class="text-red-500 dark:text-red-400">            placeholder.innerHTML = `            // 顯示網路錯誤        } catch (error) {                        }                this.showError('圖片生成失敗：' + (result.error || '未知錯誤'));                                `;                    </div>                        <p class="text-xs text-gray-400 mt-1">${result.error || '未知錯誤'}</p>                        <p class="text-sm">圖片生成失敗</p>                        </svg>                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>                        <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">                    <div class="text-red-500 dark:text-red-400">                placeholder.innerHTML = `                // 顯示錯誤狀態            } else {                this.showSuccess('食物照片生成成功！');                                `;                         class="w-full h-64 object-cover rounded-lg shadow-lg">                         alt="AI 生成的食物照片"                     <img src="data:image/jpeg;base64,${result.recipe}"     /* 點擊時微縮並加深陰影 */
+                        transform: scale(0.95);
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                    }
+
+                    /* 2. 被選中的按鈕樣式 */
+                    .time-btn.selected {
+                        background-color: white;
+                        color: theme('colors.blue.600');
+                        border: 1px solid theme('colors.blue.600');
+                    }`
+            }
+        }
 // 初始化
 const recipeGenerator = new RecipeGenerator();
 
 // 全局函數
 window.recipeGenerator = recipeGenerator;
+
+        }
+        }

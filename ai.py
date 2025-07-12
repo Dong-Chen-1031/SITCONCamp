@@ -10,7 +10,7 @@ import json
 from objprint import op
 
 api_key = os.environ.get('GEMINI_API_KEY')
-
+print(api_key)
 client = genai.Client(
     api_key=api_key,
 )
@@ -199,7 +199,7 @@ def generate_picture(prompt: str) -> str:
 
     if not result.generated_images:
         print("No images generated.")
-        return
+        return None
 
     img_bytes = result.generated_images[0].image.image_bytes
     # 把二進位圖轉成 base64 字串，前端才能顯示
@@ -255,4 +255,7 @@ def generate_picture(prompt: str) -> str:
 
 
 if __name__ == "__main__":
-    generate_picture()
+    # 測試圖片生成
+    test_prompt = "A delicious looking dish with colorful ingredients"
+    result = generate_picture(test_prompt)
+    print(f"Generated image base64 length: {len(result) if result else 'None'}")

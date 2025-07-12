@@ -1,7 +1,6 @@
+/* 隱藏直的與橫的拉桿 */
 body {
-  margin: 0;
   overflow: hidden;
-  background-color: #111;
 }
 
 #bouncingImage {

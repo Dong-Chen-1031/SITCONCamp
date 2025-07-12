@@ -12,7 +12,7 @@ from functools import wraps
 import re
 from config import SYSTEM_PROMPT
 import time
-from ai import ai_ans
+from ai import ai_ans,generate_picture
 import dotenv
 
 # 設定日誌
@@ -101,6 +101,10 @@ def open():
     """開放頁面"""
     return render_template('open.html')
 
+@app.route('/peding_putato_bounce')
+def peding_putato_bounce():
+    """開放頁面"""
+    return render_template('peding_putato_bounce.html')
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
@@ -152,6 +156,40 @@ def generate_recipe():
     except Exception as e:
         return jsonify({
             'error': f'生成食譜時發生錯誤: {str(e)}',
+            'status': 'error'
+        }), 500
+    
+@app.route('/api/generate-img', methods=['POST'])
+def generate_img():
+    """生成圖片的 API"""
+    try:
+        data = request.get_json()
+        
+        if not data or 'prompt' not in data:
+            return jsonify({
+                'error': '請求格式錯誤',
+                'status': 'error'
+            }), 400
+        
+        prompt = data['prompt']
+        
+        image_b64 = generate_picture(prompt)
+        
+        if image_b64 is None:
+            return jsonify({
+                'error': '圖片生成失敗，請稍後再試',
+                'status': 'error'
+            }), 500
+        
+        return jsonify({
+            'image': image_b64,
+            'status': 'success',
+            'generated_at': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'生成圖片時發生錯誤: {str(e)}',
             'status': 'error'
         }), 500
 

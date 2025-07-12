@@ -3,25 +3,92 @@
 {% block title %}歡迎來到 AI 食譜生成器{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-r from-pink-300 via-red-300 to-yellow-300 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 text-center bg-white dark:bg-gray-800 p-10 rounded-xl shadow-lg">
+<div id="theme-root" class="min-h-screen bg-gradient-to-r from-pink-300 via-red-300 to-yellow-300 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style="position:relative;">
+    <!-- 深淺模式切換按鈕 -->
+    <button id="theme-toggle" style="position:fixed; top:24px; right:32px; z-index:10; background:#fff3; color:#333; border-radius:999px; border:none; padding:10px 18px; font-size:1.1rem; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px #0002; transition:all 0.3s;">
+        🌙/☀️
+    </button>
+    <!-- 馬鈴薯 bouncing images，放在最底層 -->
+    <div id="potato-layer" style="position:fixed; left:0; top:0; width:100vw; height:100vh; z-index:0; pointer-events:none;">
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage" />
+    </div>
+    <div id="main-card" class="max-w-md w-full space-y-8 text-center bg-white dark:bg-gray-800 p-10 rounded-xl shadow-lg" style="position:relative; z-index:1; transition:background 0.3s, color 0.3s;">
         <div>
-            <h2 class="mt-6 text-center text-4xl font-extrabold text-pink-600">
+            <h2 class="mt-6 text-center text-4xl font-extrabold text-pink-600 dark:text-pink-300" id="main-title">
                 歡迎來到 AI 食譜生成器
             </h2>
-            <p class="mt-2 text-center text-lg text-gray-700 dark:text-gray-300">
+            <p class="mt-2 text-center text-lg text-gray-700 dark:text-gray-300" id="main-desc">
                 🥘 準備好用積木創造你的獨特食譜了嗎？
             </p>
         </div>
         <div>
             <a href="{{ url_for('index') }}"
-               class="group relative w-full flex justify-center py-3 px-5 border border-transparent text-lg font-bold rounded-full text-white bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400 transition-all duration-300">
+               class="group relative w-full flex justify-center py-3 px-5 border border-transparent text-lg font-bold rounded-full text-white bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400 transition-all duration-300 dark:bg-gradient-to-r dark:from-gray-700 dark:to-gray-900 dark:text-pink-200"
+               id="main-btn">
                 <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                    <span class="material-icons text-white">restaurant</span>
+                    <span class="material-icons text-white dark:text-pink-200">restaurant</span>
                 </span>
                 進入烹飪廚房
             </a>
         </div>
     </div>
+    <style>
+    /* 深色模式背景漸層 */
+    #theme-root.dark {
+        background: linear-gradient(90deg, #23272f 0%, #2d2f3a 50%, #23272f 100%) !important;
+    }
+    </style>
+    <script>
+    // 深淺模式切換
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeRoot = document.getElementById('theme-root');
+    function setTheme(dark) {
+        if (dark) {
+            themeRoot.classList.add('dark');
+            document.body.classList.add('dark');
+        } else {
+            themeRoot.classList.remove('dark');
+            document.body.classList.remove('dark');
+        }
+    }
+    // 根據系統預設
+    setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    themeToggle.onclick = function() {
+        const isDark = themeRoot.classList.contains('dark');
+        setTheme(!isDark);
+    };
+    // 監聽系統主題變化
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        setTheme(e.matches);
+    });
+    </script>
+    <script src="{{ url_for('static', filename='js/open.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/recipe-generator.js') }}"></script>
 </div>
 {% endblock %}
