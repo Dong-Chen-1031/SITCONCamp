@@ -265,6 +265,7 @@ class RecipeGenerator {
                     if (blockElement) {
                         blockElement.classList.add('animate-delete');
                         setTimeout(() => {
+                            this.updateConnectors();
                             this.removeBlock(draggedBlockId);
                             this.showSuccess('積木已刪除！');
                         }, 300);
