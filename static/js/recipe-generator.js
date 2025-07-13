@@ -696,7 +696,7 @@ class RecipeGenerator {
                 
                 <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 text-center">
                     <div id="food-image-container" class="mb-4">
-                        <div class="w-full aspect-auto bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                        <div class="w-full aspect-auto bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center py-4">
                             <div class="text-gray-500 dark:text-gray-400">
                                 <span class="material-icons text-7xl mx-auto mb-2">image</span>
                                 <p class="text-sm">食物照片生成中...</p>
@@ -704,8 +704,8 @@ class RecipeGenerator {
                             </div>
                         </div>
                     </div>
-                    <button onclick="recipeGenerator.generateFoodImage('${recipe.food_photo_prompt}')" hidden
-                            class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200 flex items-center justify-center mx-auto">
+                    <button onclick="recipeGenerator.generateFoodImage('${recipe.food_photo_prompt}')" 
+                            class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200 flex items-center justify-center mx-auto hidden">
                         <span class="material-icons mr-2">palette</span>
                         生成食物照片
                     </button>
@@ -1057,9 +1057,12 @@ class RecipeGenerator {
                                 class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">
                             取消
                         </button>
-                        <button onclick="recipeGenerator.getIngredientSuggestions()" 
-                                class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors">
-                            🔍 獲取建議
+                        <button id="get-suggestions-btn" onclick="recipeGenerator.getIngredientSuggestions()" 
+                                class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors flex items-center space-x-2">
+                            <span id="suggestions-btn-text">🔍 獲取建議</span>
+                            <div id="suggestions-loading" class="hidden">
+                                <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                            </div>
                         </button>
                     </div>
                 </div>
@@ -1096,7 +1099,8 @@ class RecipeGenerator {
             return;
         }
         
-        this.showLoading();
+        // 顯示載入動畫
+        this.showSuggestionsLoading();
         
         try {
             const response = await fetch('/api/suggest-ingredients', {
@@ -1121,7 +1125,33 @@ class RecipeGenerator {
             this.showError('網路連接錯誤');
             console.error('Ingredient suggestions error:', error);
         } finally {
-            this.hideLoading();
+            this.hideSuggestionsLoading();
+        }
+    }
+    
+    showSuggestionsLoading() {
+        const btn = document.getElementById('get-suggestions-btn');
+        const btnText = document.getElementById('suggestions-btn-text');
+        const loadingSpinner = document.getElementById('suggestions-loading');
+        
+        if (btn && btnText && loadingSpinner) {
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            btnText.textContent = '🤔 AI 思考中...';
+            loadingSpinner.classList.remove('hidden');
+        }
+    }
+    
+    hideSuggestionsLoading() {
+        const btn = document.getElementById('get-suggestions-btn');
+        const btnText = document.getElementById('suggestions-btn-text');
+        const loadingSpinner = document.getElementById('suggestions-loading');
+        
+        if (btn && btnText && loadingSpinner) {
+            btn.disabled = false;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            btnText.textContent = '🔍 獲取建議';
+            loadingSpinner.classList.add('hidden');
         }
     }
     
@@ -1129,34 +1159,11 @@ class RecipeGenerator {
         const modal = document.createElement('div');
         modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
         modal.innerHTML = `
-            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl mx-4 w-full max-h-96 overflow-y-auto">
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-3xl mx-4 w-full max-h-96 overflow-y-auto">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">🎯 AI 建議食譜</h3>
                 
-                <div class="space-y-4">
-                    ${suggestions.map((suggestion, index) => `
-                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            <div class="flex items-center justify-between mb-2">
-                                <h4 class="font-medium text-gray-900 dark:text-white">${suggestion.name}</h4>
-                                <span class="text-sm text-gray-500 dark:text-gray-400">${suggestion.time}</span>
-                            </div>
-                            
-                            ${suggestion.additional_ingredients && suggestion.additional_ingredients.length > 0 ? `
-                                <div class="mb-2">
-                                    <span class="text-sm text-red-600 dark:text-red-400">需要額外購買：</span>
-                                    <span class="text-sm text-gray-700 dark:text-gray-300">${suggestion.additional_ingredients.join(', ')}</span>
-                                </div>
-                            ` : ''}
-                            
-                            <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                                ${suggestion.steps.join(' → ')}
-                            </div>
-                            
-                            <button onclick="recipeGenerator.useIngredientSuggestion(${index})" 
-                                    class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm transition-colors">
-                                🚀 使用這個建議
-                            </button>
-                        </div>
-                    `).join('')}
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                    ${suggestions}
                 </div>
                 
                 <div class="mt-6 text-center">
@@ -1170,45 +1177,12 @@ class RecipeGenerator {
         
         document.body.appendChild(modal);
         
-        // 存儲建議以供使用
-        this.currentSuggestions = suggestions;
-        
         // 點擊外部關閉
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.remove();
             }
         });
-    }
-    
-    useIngredientSuggestion(index) {
-        const suggestion = this.currentSuggestions[index];
-        
-        if (!suggestion) return;
-        
-        // 清空現有積木
-        this.clearWorkspace(false);
-        
-        // 根據建議創建積木
-        suggestion.steps.forEach(step => {
-            setTimeout(() => {
-                const blockId = this.addBlock('freeform');
-                // 等待積木創建完成後填入內容
-                setTimeout(() => {
-                    const blockElement = document.getElementById(`block_${this.blockIdCounter - 1}`);
-                    const textarea = blockElement.querySelector('.description-input');
-                    if (textarea) {
-                        textarea.value = step;
-                        this.updateBlockData(`block_${this.blockIdCounter - 1}`);
-                    }
-                }, 100);
-            }, 50);
-        });
-        
-        // 關閉彈窗
-        document.querySelector('.fixed.inset-0').remove();
-        
-        this.showSuccess(`已載入「${suggestion.name}」的建議步驟！`);
     }
     
     setupKeyboardShortcuts() {

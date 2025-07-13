@@ -6,3 +6,71 @@
   height: 100px;
   pointer-events: none;
 }
+
+    /* 深色模式背景漸層 */
+    #theme-root.dark {
+        background: linear-gradient(90deg, #23272f 0%, #2d2f3a 50%, #23272f 100%) !important;
+    }
+    /* 天堂/地獄模式下主背景透明 */
+    #theme-root.heaven-bg, #theme-root.hell-bg {
+        background: transparent !important;
+    }
+    /* 四段式 iOS-style switch */
+    .ios-switch-4 {
+      width: 120px;
+      height: 36px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .ios-switch-4-track {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #ffe0e0 0%, #fff7c2 100%);
+      border-radius: 999px;
+      box-shadow: 0 2px 8px #0001;
+      transition: background 0.3s;
+      position: relative;
+    }
+    #theme-root.dark .ios-switch-4-track {
+      background: linear-gradient(90deg, #23272f 0%, #2d2f3a 100%);
+    }
+    .ios-switch-4-label {
+      position: absolute;
+      top: 7px;
+      width: 24px;
+      text-align: center;
+      font-size: 1.1rem;
+      opacity: 0.7;
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+    }
+    .ios-switch-4-thumb {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 28px;
+      height: 28px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px #0002;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: left 0.25s cubic-bezier(.4,2,.6,1), background 0.3s;
+      will-change: left;
+      font-size: 1.2rem;
+      z-index: 2;
+    }
+    #theme-root.dark .ios-switch-4-thumb {
+      background: #23272f;
+      color: #ffe066;
+    }
+    .ios-switch-4-icon {
+      pointer-events: none;
+      font-size: 1.2rem;
+      transition: color 0.3s;
+    }

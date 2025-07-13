@@ -12,7 +12,7 @@ from functools import wraps
 import re
 from config import SYSTEM_PROMPT
 import time
-from ai import ai_ans,generate_picture
+from ai import ai_ans,generate_picture,generate_ingredient_suggestions
 import dotenv
 
 # 設定日誌
@@ -86,9 +86,9 @@ def validate_json(required_fields=None):
 
 
 @app.route('/')
-def index():
-    """首頁 - 積木編輯器"""
-    return render_template('index.html')
+def open():
+    """開放頁面"""
+    return render_template('open.html')
 
 
 @app.route('/about')
@@ -96,15 +96,21 @@ def about():
     """關於頁面"""
     return render_template('about.html')
 
-@app.route('/open')
-def open():
-    """開放頁面"""
-    return render_template('open.html')
+@app.route('/index')
+def index():
+    """首頁 - 積木編輯器"""
+    return render_template('index.html')
 
 @app.route('/peding_putato_bounce')
 def peding_putato_bounce():
     """開放頁面"""
     return render_template('peding_putato_bounce.html')
+
+
+@app.route('/trail_and_error')
+def trail_and_error():
+    """開放頁面"""
+    return render_template('trail_and_error.html')
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
@@ -194,32 +200,36 @@ def generate_img():
         }), 500
 
 
-# @app.route('/api/suggest-ingredients', methods=['POST'])
-# def suggest_ingredients():
-#     """根據現有材料建議食譜"""
-#     try:
-#         data = request.get_json()
-#         available_ingredients = data.get('ingredients', [])
+@app.route('/api/suggest-ingredients', methods=['POST'])
+@rate_limit(max_requests=5, window_seconds=60)
+@validate_json(['ingredients'])
+def suggest_ingredients():
+    """根據現有材料建議食譜"""
+    try:
+        data = request.get_json()
+        available_ingredients = data.get('ingredients', [])
         
-#         if not available_ingredients:
-#             return jsonify({
-#                 'error': '請提供可用材料',
-#                 'status': 'error'
-#             }), 400
+        if not available_ingredients:
+            return jsonify({
+                'error': '請提供可用材料',
+                'status': 'error'
+            }), 400
         
-#         # 生成建議食譜
-#         suggestions = generate_ingredient_suggestions(available_ingredients)
+        # 生成建議文本
+        suggestions_text = generate_ingredient_suggestions(available_ingredients)
         
-#         return jsonify({
-#             'suggestions': suggestions,
-#             'status': 'success'
-#         })
+        return jsonify({
+            'suggestions': suggestions_text,
+            'status': 'success',
+            'generated_at': datetime.now().isoformat()
+        })
         
-#     except Exception as e:
-#         return jsonify({
-#             'error': f'生成建議時發生錯誤: {str(e)}',
-#             'status': 'error'
-#         }), 500
+    except Exception as e:
+        logger.error(f"生成材料建議時發生錯誤: {str(e)}")
+        return jsonify({
+            'error': f'生成建議時發生錯誤: {str(e)}',
+            'status': 'error'
+        }), 500
 
 
 

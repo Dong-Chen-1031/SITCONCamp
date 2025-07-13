@@ -1,4 +1,3 @@
-
 # To run this code you need to install the following dependencies:
 # pip install google-genai
 
@@ -205,6 +204,67 @@ def generate_picture(prompt: str) -> str:
     # 把二進位圖轉成 base64 字串，前端才能顯示
     b64 = base64.b64encode(img_bytes).decode('utf-8')
     return b64
+
+INGREDIENT_SUGGESTION_PROMPT = """你是一個專業的料理建議助手，專門根據用戶現有的材料提供創意料理建議。
+
+## 🎯 你的職責：
+1. 分析用戶提供的現有材料
+2. 提供3-5個可行的料理建議
+3. 每個建議都要考慮材料的最佳搭配和使用方式
+
+## 🧠 建議原則：
+- **實用性優先**：建議的料理要能實際製作
+- **創意與傳統並重**：既要有創新也要考慮可接受性
+- **材料最大化利用**：盡量使用用戶提供的所有材料
+- **難度適中**：建議的料理不要太複雜
+
+## 📝 輸出格式：
+請以純文本格式提供建議，每個建議包含：
+- 料理名稱
+- 製作時間 
+- 簡潔的製作步驟
+- 如需額外材料請註明
+
+## 範例：
+🍳 **番茄洋蔥炒蛋** (15分鐘)
+1. 洋蔥切丝，番茄切塊
+2. 熱鍋下洋蔥炒香
+3. 加入番茄炒出汁水
+4. 倒入打散的雞蛋快速炒熟
+*需要額外購買：油、鹽*
+
+請根據用戶提供的材料，生成實用且創意的料理建議！"""
+
+def generate_ingredient_suggestions(ingredients: List[str]) -> str:
+    """根據現有材料生成料理建議，返回純文本"""
+    ingredients_text = "、".join(ingredients)
+    prompt = f"我現有的材料：{ingredients_text}\n\n請根據這些材料提供料理建議。"
+    
+    generate_content_config = types.GenerateContentConfig(
+        thinking_config = types.ThinkingConfig(
+            thinking_budget=0,
+        ),
+        system_instruction=[
+            types.Part.from_text(text=INGREDIENT_SUGGESTION_PROMPT),
+        ],
+    )
+    
+    contents = [
+        types.Content(
+            role="user",
+            parts=[
+                types.Part.from_text(text=prompt),
+            ],
+        ),
+    ]
+    
+    ans = client.models.generate_content(
+        model=model,
+        contents=contents,
+        config=generate_content_config,
+    )
+    
+    return ans.text
 
 # if __name__ == "__main__":
 # #     generate(

@@ -12,8 +12,10 @@ const potatoes = Array.from(imgs).map(img => {
     vx: (Math.random() * 4 + 2) * (Math.random() < 0.5 ? 1 : -1),
     vy: (Math.random() * 4 + 2) * (Math.random() < 0.5 ? 1 : -1),
     angle: Math.random() * 360
+    // img.style.display = 'block'; // 隱藏原始圖片，使用 JavaScript 動態顯示
   };
 });
+
 
 let mouseX = window.innerWidth / 2;
 let mouseY = window.innerHeight / 2;
@@ -136,3 +138,158 @@ function animate() {
 }
 
 animate();
+
+    // 四段式 iOS-style 主題切換
+    const themeRoot = document.getElementById('theme-root');
+    const heavenBg = document.getElementById('heaven-bg');
+    const hellBg = document.getElementById('hell-bg');
+    const iosSwitch4 = document.getElementById('ios-switch-4');
+    const iosThumb4 = document.getElementById('ios-switch-4-thumb');
+    const iosIcon4 = document.getElementById('ios-switch-4-icon');
+    // 0: light, 1: dark, 2: heaven, 3: hell
+    let themeMode = 0;
+    let dragging = false, startX = 0, thumbStart = 0;
+    // 四段 thumb 精確位置（根據 switch 寬度 120px, thumb 28px, track 4px padding）
+    const positions = [4, 34, 64, 94];
+    const icons = ['☀️', '🌙', '😇', '😈'];
+
+    function setThemeMode(mode, animate = true) {
+      themeMode = mode;
+      iosThumb4.style.left = positions[mode] + 'px';
+      iosIcon4.textContent = icons[mode];
+      // 先移除透明背景 class
+      themeRoot.classList.remove('heaven-bg', 'hell-bg');
+      if (mode === 0) { // light
+        themeRoot.classList.remove('dark');
+        document.body.classList.remove('dark');
+        heavenBg.style.display = 'none';
+        hellBg.style.display = 'none';
+      } else if (mode === 1) { // dark
+        themeRoot.classList.add('dark');
+        document.body.classList.add('dark');
+        heavenBg.style.display = 'none';
+        hellBg.style.display = 'none';
+      } else if (mode === 2) { // heaven
+        themeRoot.classList.remove('dark');
+        document.body.classList.remove('dark');
+        heavenBg.style.display = '';
+        hellBg.style.display = 'none';
+        themeRoot.classList.add('heaven-bg');
+      } else if (mode === 3) { // hell
+        themeRoot.classList.add('dark');
+        document.body.classList.add('dark');
+        heavenBg.style.display = 'none';
+        hellBg.style.display = '';
+        themeRoot.classList.add('hell-bg');
+      }
+      if (!animate) {
+        iosThumb4.style.transition = 'none';
+        setTimeout(()=>{ iosThumb4.style.transition = ''; }, 10);
+      }
+    }(window.matchMedia('(prefers-color-scheme: dark)').matches ? 1 : 0, false);
+
+    // 點擊切換
+    iosSwitch4.addEventListener('click', function(e) {
+      if (dragging) return;
+      // 根據點擊位置決定模式
+      const rect = iosSwitch4.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      let idx = 0;
+      if (x > rect.width * 0.85) idx = 3;
+      else if (x > rect.width * 0.6) idx = 2;
+      else if (x > rect.width * 0.35) idx = 1;
+      setThemeMode(idx);
+    });
+
+    // 拖曳切換
+    iosThumb4.addEventListener('mousedown', function(e) {
+      dragging = true;
+      startX = e.clientX;
+      thumbStart = parseInt(iosThumb4.style.left) || positions[themeMode];
+      iosThumb4.style.transition = 'none';
+      document.body.style.userSelect = 'none';
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!dragging) return;
+      let dx = e.clientX - startX;
+      let newLeft = Math.min(positions[3], Math.max(positions[0], thumbStart + dx));
+      iosThumb4.style.left = newLeft + 'px';
+      // 動態切換 icon
+      let idx = 0;
+      if (newLeft > (positions[2] + positions[3]) / 2) idx = 3;
+      else if (newLeft > (positions[1] + positions[2]) / 2) idx = 2;
+      else if (newLeft > (positions[0] + positions[1]) / 2) idx = 1;
+      iosIcon4.textContent = icons[idx];
+    });
+    document.addEventListener('mouseup', function(e) {
+      if (!dragging) return;
+      dragging = false;
+      document.body.style.userSelect = '';
+      let left = parseInt(iosThumb4.style.left) || positions[themeMode];
+      let idx = 0;
+      if (left > (positions[2] + positions[3]) / 2) idx = 3;
+      else if (left > (positions[1] + positions[2]) / 2) idx = 2;
+      else if (left > (positions[0] + positions[1]) / 2) idx = 1;
+      setThemeMode(idx);
+      iosThumb4.style.transition = '';
+    });
+
+    // 監聽系統主題變化（只在 light/dark 時自動切換）
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      if (themeMode === 0 || themeMode === 1) setThemeMode(e.matches ? 1 : 0);
+    });
+
+    // 初始化（根據系統預設）
+    setThemeMode(window.matchMedia('(prefers-color-scheme: dark)').matches ? 1 : 0, false);
+
+    // 點擊切換
+    iosSwitch4.addEventListener('click', function(e) {
+      if (dragging) return;
+      // 根據點擊位置決定模式
+      const rect = iosSwitch4.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      let idx = 0;
+      if (x > rect.width * 0.85) idx = 3;
+      else if (x > rect.width * 0.6) idx = 2;
+      else if (x > rect.width * 0.35) idx = 1;
+      setThemeMode(idx);
+    });
+
+    // 拖曳切換
+    iosThumb4.addEventListener('mousedown', function(e) {
+      dragging = true;
+      startX = e.clientX;
+      thumbStart = parseInt(iosThumb4.style.left) || positions[themeMode];
+      iosThumb4.style.transition = 'none';
+      document.body.style.userSelect = 'none';
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!dragging) return;
+      let dx = e.clientX - startX;
+      let newLeft = Math.min(positions[3], Math.max(positions[0], thumbStart + dx));
+      iosThumb4.style.left = newLeft + 'px';
+      // 動態切換 icon
+      let idx = 0;
+      if (newLeft > (positions[2] + positions[3]) / 2) idx = 3;
+      else if (newLeft > (positions[1] + positions[2]) / 2) idx = 2;
+      else if (newLeft > (positions[0] + positions[1]) / 2) idx = 1;
+      iosIcon4.textContent = icons[idx];
+    });
+    document.addEventListener('mouseup', function(e) {
+      if (!dragging) return;
+      dragging = false;
+      document.body.style.userSelect = '';
+      let left = parseInt(iosThumb4.style.left) || positions[themeMode];
+      let idx = 0;
+      if (left > (positions[2] + positions[3]) / 2) idx = 3;
+      else if (left > (positions[1] + positions[2]) / 2) idx = 2;
+      else if (left > (positions[0] + positions[1]) / 2) idx = 1;
+      setThemeMode(idx);
+      iosThumb4.style.transition = '';
+    });
+
+    // 監聽系統主題變化（只在 light/dark 時自動切換）
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      if (themeMode === 0 || themeMode === 1) setThemeMode(e.matches ? 1 : 0);
+    });
+    
