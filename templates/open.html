@@ -28,7 +28,8 @@
         <div style="position:absolute; left:0; top:0; width:100vw; height:100vh; background:rgba(30,20,40,0.55);"></div>
     </div>
     <!-- 馬鈴薯 bouncing images，放在最底層 -->
-    <div id="potato-layer" style="position:fixed; left:0; top:0; width:100vw; height:100vh; z-index:0; pointer-events:none;">
+    <div id="potato-layer" style="position:fixed; left:0; top:0; width:200vw; height:200vh; z-index:0; pointer-events:none;">
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage"/>
         <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage"/>
         <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage"/>
         <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage"/>

@@ -165,10 +165,10 @@ const icons = ['☀️', '🌙', '😇', '😈'];
 function updatePotatoImages(mode) {
   const potatoImgs = document.querySelectorAll('.bouncingImage');
   let src = '';
-  if (mode === 0) src = '/static/img/egg.jpg'; // 淺色
+  if (mode === 0) src = '/static/img/egg2.png'; // 淺色
   else if (mode === 1) src = '/static/img/putato.png'; // 深色
   else if (mode === 2) src = '/static/img/apple.png'; // 天堂
-  else if (mode === 3) src = '/static/img/chili.jpg'; // 地獄
+  else if (mode === 3) src = '/static/img/chili.png'; // 地獄
   potatoImgs.forEach(img => { img.src = src; });
 }
 
