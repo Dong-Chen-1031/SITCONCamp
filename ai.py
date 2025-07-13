@@ -10,7 +10,7 @@ import json
 from objprint import op
 
 api_key = os.environ.get('GEMINI_API_KEY')
-print(api_key)
+# print(api_key)
 client = genai.Client(
     api_key=api_key,
 )

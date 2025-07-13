@@ -800,7 +800,7 @@ class RecipeGenerator {
                 </div>
                 
                 <div class="flex flex-wrap gap-4 justify-center pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <button onclick="recipeGenerator.shareRecipe()" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 flex items-center">
+                    <button hidden onclick="recipeGenerator.shareRecipe()" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 flex items-center">
                         <span class="material-icons mr-2">share</span>
                         分享評估
                     </button>
