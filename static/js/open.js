@@ -206,7 +206,7 @@ function setThemeMode(mode, animate = true) {
     setTimeout(()=>{ iosThumb4.style.transition = ''; }, 10);
   }
   document.querySelectorAll(".bouncingImage").forEach(img => {
-    img.classList.remove('hidden');
+    img.style.classList.remove('hidden');
   })
   
 }(window.matchMedia('(prefers-color-scheme: dark)').matches ? 1 : 0, false);
