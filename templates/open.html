@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}歡迎來到 AI 食譜生成器{% endblock %}
+{% block title %}AI 食譜生成器{% endblock %}
 
 {% block content %}
 <div id="theme-root" class="min-h-screen bg-gradient-to-r from-pink-300 via-red-300 to-yellow-300 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style="position:relative;">
@@ -29,18 +29,19 @@
     </div>
     <!-- 馬鈴薯 bouncing images，放在最底層 -->
     <div id="potato-layer" style="position:fixed; left:0; top:0; width:200vw; height:200vh; z-index:0; pointer-events:none;">
-        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage"/>
-        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage"/>
-        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage"/>
-        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage"/>
-        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage"/>
-        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage"/>
-        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage"/>
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage hidden" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage hidden" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage hidden" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage hidden" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage hidden" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage hidden" />
+        <img src="{{ url_for('static', filename='img/putato.png') }}" class="bouncingImage hidden" />
+
     </div>
     <div id="main-card" class="shadow-md transition-all hover:shadow-lg w-full space-y-8 text-center bg-white dark:bg-gray-800 p-10 rounded-xl" style="position:relative; z-index:1; min-width:190px; height:calc(100% - 2rem + 30px); max-width:calc(672px - 110px);">
         <div>
             <h2 class="mt-6 text-center text-4xl font-extrabold text-pink-600 dark:text-pink-300" id="main-title">
-                歡迎來到 AI 食譜生成器
+                AI 食譜生成器
             </h2>
             <p class="mt-2 text-center text-lg text-gray-700 dark:text-gray-300" id="main-desc">
                 🥘 準備好用積木創造你的獨特食譜了嗎？

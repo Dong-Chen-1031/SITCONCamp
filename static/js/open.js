@@ -205,6 +205,10 @@ function setThemeMode(mode, animate = true) {
     iosThumb4.style.transition = 'none';
     setTimeout(()=>{ iosThumb4.style.transition = ''; }, 10);
   }
+  document.querySelectorAll(".bouncingImage").forEach(img => {
+    img.classList.remove('hidden');
+  })
+  
 }(window.matchMedia('(prefers-color-scheme: dark)').matches ? 1 : 0, false);
 
 // 點擊切換
