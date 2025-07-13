@@ -1,10 +1,9 @@
-
-
 #bouncingImage {
   position: absolute;
   width: 100px;
   height: 100px;
   pointer-events: none;
+  visibility: hidden;
 }
 
     /* 深色模式背景漸層 */
@@ -74,3 +73,9 @@
       font-size: 1.2rem;
       transition: color 0.3s;
     }
+
+
+.block-item:focus-within {
+  outline: none;
+  box-shadow: none;
+}
