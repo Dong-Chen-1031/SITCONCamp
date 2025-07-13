@@ -162,29 +162,39 @@ let dragging = false, startX = 0, thumbStart = 0;
 const positions = [4, 34, 64, 94];
 const icons = ['☀️', '🌙', '😇', '😈'];
 
+function updatePotatoImages(mode) {
+  const potatoImgs = document.querySelectorAll('.bouncingImage');
+  let src = '';
+  if (mode === 0) src = '/static/img/egg.jpg'; // 淺色
+  else if (mode === 1) src = '/static/img/putato.png'; // 深色
+  else if (mode === 2) src = '/static/img/apple.png'; // 天堂
+  else if (mode === 3) src = '/static/img/chili.jpg'; // 地獄
+  potatoImgs.forEach(img => { img.src = src; });
+}
+
 function setThemeMode(mode, animate = true) {
   themeMode = mode;
   iosThumb4.style.left = positions[mode] + 'px';
   iosIcon4.textContent = icons[mode];
-  // 先移除透明背景 class
   themeRoot.classList.remove('heaven-bg', 'hell-bg');
-  if (mode === 0) { // light
+  updatePotatoImages(mode); // 主題切換時更新圖片
+  if (mode === 0) {
     themeRoot.classList.remove('dark');
     document.body.classList.remove('dark');
     heavenBg.style.display = 'none';
     hellBg.style.display = 'none';
-  } else if (mode === 1) { // dark
+  } else if (mode === 1) {
     themeRoot.classList.add('dark');
     document.body.classList.add('dark');
     heavenBg.style.display = 'none';
     hellBg.style.display = 'none';
-  } else if (mode === 2) { // heaven
+  } else if (mode === 2) {
     themeRoot.classList.remove('dark');
     document.body.classList.remove('dark');
     heavenBg.style.display = '';
     hellBg.style.display = 'none';
     themeRoot.classList.add('heaven-bg');
-  } else if (mode === 3) { // hell
+  } else if (mode === 3) {
     themeRoot.classList.add('dark');
     document.body.classList.add('dark');
     heavenBg.style.display = 'none';

@@ -67,7 +67,6 @@
         </div>
     </nav>
 
-    <main class="flex-grow">
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -97,7 +96,6 @@
         {% endwith %}
 
         {% block content %}{% endblock %}
-    </main>
 
     <footer class="bg-dark text-white" style="display: none;">
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
